@@ -1,0 +1,30 @@
+# LostLink AI Service Dependencies
+
+# API Framework
+fastapi==0.162.0
+uvicorn==0.54.0
+python-multipart==0.0.33
+
+# Configuration and Validation
+python-dotenv==1.2.4
+pydantic==2.14.2
+
+# Database
+PyMySQL==1.2.3
+
+# Vector Database
+qdrant-client==1.20.0
+
+# AI and Machine Learning
+numpy==2.5.4
+scikit-learn==1.9.1
+torch==2.15.0
+torchvision==0.29.2
+transformers==5.22.1
+sentence-transformers==6.2.0
+huggingface_hub==2.4.0
+
+# Computer Vision and Image Processing
+opencv-python==5.0.0.93
+Pillow==13.0.0
+ultralytics==8.4.198
