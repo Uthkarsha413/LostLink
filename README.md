@@ -392,25 +392,23 @@ Create `frontend/.env.local` and configure the required database and AI service 
 
 ### 4. Configure the AI Service
 
-From the project root:
-
 ```bash
 cd ai-service
+
 python3 -m venv .venv
 source .venv/bin/activate
+
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-Install the Python dependencies required by the AI service, and configure `ai-service/.env`.
-
-> The repository currently does not include a Python dependency manifest. A `requirements.txt` should be added to make fresh installations reproducible.
+Configure the required environment variables in `ai-service/.env`.
 
 ### 5. Configure Qdrant
 
 Start a Qdrant instance and configure its connection details in the AI service environment.
 
 Ensure the required vector collections are created before running indexing and search workflows.
-
----
 
 ## Environment Configuration
 
