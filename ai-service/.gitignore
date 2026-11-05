@@ -1,0 +1,25 @@
+# Environment variables and secrets
+.env
+.env.*
+
+# Python virtual environment
+.venv/
+venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Model files
+*.pt
+*.pth
+*.onnx
+
+# Local uploads and temporary files
+uploads/
+temp/
