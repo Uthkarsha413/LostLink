@@ -43,7 +43,10 @@ export default function RegisterPage() {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          phoneNumber: form.phone || null,
+        }),
       });
 
       const result = await response.json();
@@ -62,19 +65,22 @@ export default function RegisterPage() {
   }
 
   const inputClass =
-    'w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400';
+    'w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400';
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#080d18] px-5 py-12 text-white">
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12 text-white">
       <div className="w-full max-w-lg">
-        <Link href="/" className="mb-8 inline-flex items-center gap-2 text-xl font-bold">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400 text-lg font-black text-slate-950">
-            L
-          </span>
-          LostLink
-        </Link>
+        <div className="mb-8 text-center">
+          <Link href="/" className="inline-block group">
+            <img
+              src="/lostlink-logo-white.png"
+              alt="LostLink"
+              className="h-10 w-auto mx-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+          </Link>
+        </div>
 
-        <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-7 shadow-2xl sm:p-9">
+        <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-7 shadow-2xl backdrop-blur-xl sm:p-9">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-400">
             Join LostLink
           </p>

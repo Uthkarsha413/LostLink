@@ -43,17 +43,18 @@ export default function Navbar() {
         setAuthLoading(true);
         const res = await fetch("/api/auth/me", { cache: "no-store" });
         const json = await res.json();
-        if (res.ok && json.success && json.user) {
+        const userData = json.data || json.user;
+        if (res.ok && json.success && userData) {
           const rolesArray =
-            typeof json.user.roles === "string"
-              ? json.user.roles.split(",")
-              : Array.isArray(json.user.roles)
-              ? json.user.roles
+            typeof userData.roles === "string"
+              ? userData.roles.split(",")
+              : Array.isArray(userData.roles)
+              ? userData.roles
               : [];
           setUser({
-            userId: json.user.user_id || json.user.userId,
-            fullName: json.user.full_name || json.user.fullName || "User",
-            email: json.user.email,
+            userId: userData.userId || userData.user_id,
+            fullName: userData.fullName || userData.full_name || "User",
+            email: userData.email,
             roles: rolesArray,
           });
         } else {
