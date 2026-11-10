@@ -51,21 +51,10 @@ type ClipResult = {
   similarity_percentage: number;
 };
 
-type ClaimMessage = {
-  reportId: number;
-  type: "success" | "error";
-  message: string;
-};
+type ClaimMessage = { reportId: number; type: "success" | "error"; message: string };
 
-function ItemCard({
-  label,
-  reportId,
-  item,
-}: {
-  label: string;
-  reportId: number;
-  item: ItemDetails;
-}) {
+function ItemCard({ label, reportId, item }: { label: string; reportId: number; item: ItemDetails }) {
+  const isLost = label.includes("LOST");
   const details = [
     ["Category", item.category],
     ["Brand", item.brand],
@@ -74,33 +63,22 @@ function ItemCard({
   ];
 
   return (
-    <div className="rounded-xl border border-white/10 bg-[#101625] p-5">
-      <p className="text-xs font-semibold tracking-[0.2em] text-violet-400">
-        {label}
+    <div className={`rounded-xl border p-5 backdrop-blur ${
+      isLost
+        ? "border-rose-900/40 bg-rose-950/10"
+        : "border-teal-900/40 bg-teal-950/10"
+    }`}>
+      <p className={`text-xs font-bold tracking-[0.2em] uppercase ${isLost ? "text-rose-400" : "text-teal-400"}`}>
+        {isLost ? "🔍 " : "📦 "}{label}
       </p>
-
-      <h3 className="mt-3 text-lg font-semibold text-white">
-        {item.title || "Untitled item"}
-      </h3>
-
-      <p className="mt-1 text-xs text-slate-500">
-        Report #{reportId}
-      </p>
-
-      <p className="mt-4 min-h-16 text-sm leading-6 text-slate-300">
-        {item.description || "No description available."}
-      </p>
-
-      <div className="mt-4 space-y-3 border-t border-white/10 pt-4">
+      <h3 className="mt-3 text-lg font-bold text-white">{item.title || "Untitled item"}</h3>
+      <p className="mt-0.5 text-xs text-slate-500">Report #{reportId}</p>
+      <p className="mt-3 min-h-14 text-sm leading-6 text-slate-300">{item.description || "No description available."}</p>
+      <div className="mt-4 space-y-2 border-t border-white/5 pt-4">
         {details.map(([name, value]) => (
-          <div
-            key={name}
-            className="flex justify-between gap-3 text-xs"
-          >
+          <div key={name} className="flex justify-between gap-3 text-xs">
             <span className="text-slate-500">{name}</span>
-            <span className="text-right text-slate-200">
-              {value || "Not specified"}
-            </span>
+            <span className="text-right font-medium text-slate-200">{value || "Not specified"}</span>
           </div>
         ))}
       </div>
@@ -108,51 +86,42 @@ function ItemCard({
   );
 }
 
+const scoreLabels = [
+  ["Semantic similarity", "semantic"],
+  ["CLIP image similarity", "clip_image"],
+  ["Category", "category"],
+  ["Brand", "brand"],
+  ["Colour", "colour"],
+  ["Location", "location"],
+  ["Time", "time"],
+] as const;
+
 export default function MatchesPage() {
   const [reportId, setReportId] = useState("5");
-
   const [clipQuery, setClipQuery] = useState("");
   const [clipTarget, setClipTarget] = useState<"LOST" | "FOUND">("FOUND");
   const [clipResults, setClipResults] = useState<ClipResult[]>([]);
   const [clipLoading, setClipLoading] = useState(false);
   const [clipError, setClipError] = useState("");
   const [clipSearched, setClipSearched] = useState(false);
-
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [searched, setSearched] = useState(false);
-
   const [claimLoadingId, setClaimLoadingId] = useState<number | null>(null);
   const [claimMessage, setClaimMessage] = useState<ClaimMessage | null>(null);
 
   async function findMatches(e: React.FormEvent) {
     e.preventDefault();
-
-    setLoading(true);
-    setError("");
-    setMatches([]);
-    setSearched(false);
-    setClaimMessage(null);
-
+    setLoading(true); setError(""); setMatches([]); setSearched(false); setClaimMessage(null);
     try {
-      const response = await fetch(
-        `/api/matching?reportId=${encodeURIComponent(reportId)}`,
-        { cache: "no-store" }
-      );
-
+      const response = await fetch(`/api/matching?reportId=${encodeURIComponent(reportId)}`, { cache: "no-store" });
       const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Unable to find matches.");
-      }
-
+      if (!response.ok || !data.success) throw new Error(data.error || "Unable to find matches.");
       setMatches(data.result.matches || []);
       setSearched(true);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Something went wrong."
-      );
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -160,148 +129,106 @@ export default function MatchesPage() {
 
   async function findClipMatches(e: React.FormEvent) {
     e.preventDefault();
-
-    setClipLoading(true);
-    setClipError("");
-    setClipResults([]);
-    setClipSearched(false);
-
+    setClipLoading(true); setClipError(""); setClipResults([]); setClipSearched(false);
     try {
       const response = await fetch("/api/matching", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query_text: clipQuery,
-          target_report_type: clipTarget,
-          limit: 5,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query_text: clipQuery, target_report_type: clipTarget, limit: 5 }),
       });
-
       const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Unable to search items.");
-      }
-
+      if (!response.ok || !data.success) throw new Error(data.error || "Unable to search items.");
       setClipResults(data.results || []);
       setClipSearched(true);
     } catch (err) {
-      setClipError(
-        err instanceof Error ? err.message : "Something went wrong."
-      );
+      setClipError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setClipLoading(false);
     }
   }
 
   async function submitClaim(match: Match) {
-    setClaimLoadingId(match.found_report_id);
-    setClaimMessage(null);
-
+    setClaimLoadingId(match.found_report_id); setClaimMessage(null);
     try {
       const response = await fetch("/api/claims", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lostReportId: match.lost_report_id,
-          foundReportId: match.found_report_id,
-          matchId: null,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lostReportId: match.lost_report_id, foundReportId: match.found_report_id, matchId: null }),
       });
-
       const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Unable to submit your claim.");
-      }
-
-      setClaimMessage({
-        reportId: match.found_report_id,
-        type: "success",
-        message: "Your ownership claim has been submitted successfully.",
-      });
+      if (!response.ok || !data.success) throw new Error(data.error || "Unable to submit your claim.");
+      setClaimMessage({ reportId: match.found_report_id, type: "success", message: "✅ Ownership claim submitted successfully." });
     } catch (err) {
       setClaimMessage({
         reportId: match.found_report_id,
         type: "error",
-        message:
-          err instanceof Error
-            ? err.message
-            : "Something went wrong.",
+        message: err instanceof Error ? err.message : "Something went wrong.",
       });
     } finally {
       setClaimLoadingId(null);
     }
   }
 
-  function recommendationLabel(value: string) {
-    return value.replaceAll("_", " ");
+  function getMatchColor(pct: number) {
+    if (pct >= 75) return "text-emerald-300 border-emerald-700/50 bg-emerald-950/40";
+    if (pct >= 50) return "text-cyan-300 border-cyan-700/50 bg-cyan-950/40";
+    if (pct >= 25) return "text-amber-300 border-amber-700/50 bg-amber-950/40";
+    return "text-slate-300 border-slate-700 bg-slate-800/60";
   }
 
-  const scoreLabels = [
-    ["Semantic similarity", "semantic"],
-    ["CLIP image similarity", "clip_image"],
-    ["Category", "category"],
-    ["Brand", "brand"],
-    ["Colour", "colour"],
-    ["Location", "location"],
-    ["Time", "time"],
-  ] as const;
+  function getMatchBarColor(pct: number) {
+    if (pct >= 75) return "from-emerald-600 to-emerald-400";
+    if (pct >= 50) return "from-cyan-600 to-blue-400";
+    if (pct >= 25) return "from-amber-600 to-amber-400";
+    return "from-slate-600 to-slate-400";
+  }
 
   return (
-    <main className="min-h-screen bg-[#080b14] px-5 py-10 text-white sm:px-8">
-      <div className="mx-auto max-w-5xl">
-        <Link
-          href="/"
-          className="mb-10 inline-flex text-sm text-slate-400 transition hover:text-white"
-        >
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
+      {/* Ambient glows */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto max-w-5xl">
+        <Link href="/" className="mb-8 inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white transition-colors">
           ← Back to LostLink
         </Link>
 
+        {/* Header */}
         <div className="mb-8">
-          <p className="mb-3 text-xs font-semibold tracking-[0.25em] text-violet-400">
-            LOSTLINK INTELLIGENCE
+          <p className="mb-3 text-xs font-bold tracking-[0.3em] text-violet-400 uppercase">
+            🤖 LostLink Intelligence
           </p>
-
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-            AI Match Finder<span className="text-violet-400">.</span>
+          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
+            <span className="bg-gradient-to-r from-white via-violet-200 to-indigo-300 bg-clip-text text-transparent">
+              AI Match Finder
+            </span>
+            <span className="text-violet-400">.</span>
           </h1>
-
           <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
-            Discover potential lost-and-found connections using semantic
-            similarity, visual intelligence, item attributes and campus
-            information.
+            Discover potential lost-and-found connections using semantic similarity, visual intelligence, item attributes and campus information.
           </p>
         </div>
 
         {/* CLIP Natural Language Search */}
-        <section className="mb-8 rounded-2xl border border-violet-400/20 bg-violet-400/[0.04] p-5 sm:p-7">
-          <p className="text-xs font-semibold tracking-[0.2em] text-violet-400">
-            CLIP · VISUAL INTELLIGENCE
-          </p>
-
-          <h2 className="mt-3 text-2xl font-semibold text-white">
-            Search items using AI
-          </h2>
-
+        <section className="mb-8 rounded-2xl border border-violet-500/20 bg-violet-500/[0.04] p-6 backdrop-blur sm:p-7">
+          <div className="flex items-center gap-3 mb-1">
+            <span className="rounded-lg bg-violet-500/20 px-2.5 py-1 text-xs font-bold text-violet-300 uppercase tracking-wider">
+              🔮 CLIP · Visual Intelligence
+            </span>
+          </div>
+          <h2 className="mt-3 text-2xl font-bold text-white">Search Items Using AI</h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            Describe the appearance of an item. CLIP compares your text
-            description with images stored in the LostLink vector database.
+            Describe the appearance of an item. CLIP compares your text description with images in the LostLink vector database.
           </p>
 
           <form onSubmit={findClipMatches} className="mt-6 space-y-4">
             <div>
-              <label
-                htmlFor="clipQuery"
-                className="mb-2 block text-sm text-slate-300"
-              >
+              <label htmlFor="clipQuery" className="mb-2 block text-sm font-semibold text-slate-300">
                 Describe the item
               </label>
-
               <input
                 id="clipQuery"
                 type="text"
@@ -311,116 +238,78 @@ export default function MatchesPage() {
                 value={clipQuery}
                 onChange={(e) => setClipQuery(e.target.value)}
                 placeholder="Example: A black smartphone with a large screen"
-                className="w-full rounded-xl border border-white/10 bg-[#101625] px-4 py-3 text-white outline-none focus:border-violet-400"
+                className="w-full rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-violet-400 transition-colors"
               />
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <select
                 value={clipTarget}
-                onChange={(e) =>
-                  setClipTarget(e.target.value as "LOST" | "FOUND")
-                }
-                className="rounded-xl border border-white/10 bg-[#101625] px-4 py-3 text-white outline-none focus:border-violet-400"
+                onChange={(e) => setClipTarget(e.target.value as "LOST" | "FOUND")}
+                className="rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-violet-400 transition-colors"
               >
-                <option value="FOUND">Search FOUND items</option>
-                <option value="LOST">Search LOST items</option>
+                <option value="FOUND">📦 Search FOUND items</option>
+                <option value="LOST">🔍 Search LOST items</option>
               </select>
-
               <button
                 type="submit"
                 disabled={clipLoading}
-                className="flex-1 rounded-xl bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-500 disabled:opacity-50"
+                className="flex-1 rounded-xl bg-violet-600 px-6 py-3 text-sm font-bold text-white hover:bg-violet-500 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-100 shadow-lg shadow-violet-900/40"
               >
-                {clipLoading ? "Searching with CLIP..." : "Search with CLIP →"}
+                {clipLoading ? "🔮 Searching with CLIP..." : "Search with CLIP →"}
               </button>
             </div>
           </form>
 
           {clipError && (
-            <p className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
-              {clipError}
-            </p>
+            <p className="mt-4 rounded-xl border border-red-800 bg-red-950/40 p-3 text-sm text-red-300">{clipError}</p>
           )}
 
           {clipLoading && (
-            <p className="mt-4 text-sm text-violet-300">
-              Comparing your description with stored item images...
-            </p>
+            <div className="mt-6 flex items-center gap-3 text-sm text-violet-300">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-violet-400 border-t-transparent" />
+              Comparing description with stored item images...
+            </div>
           )}
 
           {clipSearched && !clipLoading && (
             <div className="mt-6 border-t border-white/10 pt-5">
-              <h3 className="text-lg font-semibold text-white">
-                CLIP Search Results ({clipResults.length})
+              <h3 className="text-lg font-bold text-white">
+                CLIP Results ({clipResults.length})
               </h3>
 
               {clipResults.length === 0 ? (
-                <p className="mt-3 text-sm text-slate-400">
-                  No matching images found. Try another description.
-                </p>
+                <p className="mt-3 text-sm text-slate-400">No matching images found. Try a different description.</p>
               ) : (
                 <div className="mt-4 space-y-3">
                   {clipResults.map((item) => (
-                    <div
-                      key={`${item.report_id}-${item.image_id}`}
-                      className="rounded-xl border border-white/10 bg-[#101625] p-4"
-                    >
+                    <div key={`${item.report_id}-${item.image_id}`} className="rounded-xl border border-white/10 bg-slate-900/80 p-4 backdrop-blur">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                          <p className="text-xs font-semibold tracking-wider text-violet-400">
+                          <p className="text-xs font-bold tracking-wider text-violet-400">
                             {item.report_type} REPORT #{item.report_id}
                           </p>
-
-                          <h4 className="mt-2 font-semibold text-white">
-                            {item.title || "Untitled item"}
-                          </h4>
+                          <h4 className="mt-1 font-semibold text-white">{item.title || "Untitled item"}</h4>
                         </div>
-
                         <div className="text-right">
-                          <p className="text-2xl font-bold text-violet-300">
-                            {item.similarity_percentage.toFixed(1)}%
-                          </p>
-
-                          <p className="text-xs text-slate-500">
-                            Cosine similarity
-                          </p>
+                          <p className="text-2xl font-black text-violet-300">{item.similarity_percentage.toFixed(1)}%</p>
+                          <p className="text-xs text-slate-500">Cosine similarity</p>
                         </div>
                       </div>
-
-                      <div className="mt-4 grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
-                        <p className="text-slate-400">
-                          Category:{" "}
-                          <span className="text-slate-200">
-                            {item.category || "—"}
-                          </span>
-                        </p>
-
-                        <p className="text-slate-400">
-                          Brand:{" "}
-                          <span className="text-slate-200">
-                            {item.brand || "—"}
-                          </span>
-                        </p>
-
-                        <p className="text-slate-400">
-                          Colour:{" "}
-                          <span className="text-slate-200">
-                            {item.color || "—"}
-                          </span>
-                        </p>
-
-                        <p className="text-slate-400">
-                          Location:{" "}
-                          <span className="text-slate-200">
-                            {item.location || "—"}
-                          </span>
-                        </p>
+                      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-violet-600 to-indigo-400"
+                          style={{ width: `${Math.min(100, item.similarity_percentage)}%` }}
+                        />
                       </div>
-
-                      <p className="mt-3 text-xs text-slate-500">
-                        Image quality status: {item.image_quality_status}
-                      </p>
+                      <div className="mt-3 grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
+                        {[["Category", item.category], ["Brand", item.brand], ["Colour", item.color], ["Location", item.location]].map(([k, v]) => (
+                          <p key={k} className="text-slate-400">
+                            {k}: <span className="text-slate-200">{v || "—"}</span>
+                          </p>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-xs text-slate-600">Image quality: {item.image_quality_status}</p>
                     </div>
                   ))}
                 </div>
@@ -429,23 +318,24 @@ export default function MatchesPage() {
           )}
 
           <p className="mt-5 text-xs leading-5 text-amber-200/70">
-            CLIP similarity is a visual retrieval score, not an ownership
-            probability or proof. Human verification is still required.
+            ⚠️ CLIP similarity is a visual retrieval score, not ownership proof. Human verification is still required.
           </p>
         </section>
 
         {/* Hybrid Match Finder */}
         <form
           onSubmit={findMatches}
-          className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-7"
+          className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur sm:p-7"
         >
-          <label
-            htmlFor="reportId"
-            className="mb-3 block text-sm font-medium text-slate-200"
-          >
-            Enter your LOST report ID
+          <div className="mb-4">
+            <h2 className="text-lg font-bold text-white">🧠 Hybrid AI Match Finder</h2>
+            <p className="mt-1 text-sm text-slate-400">
+              Enter your lost report ID to find potential found item matches using semantic similarity + multi-signal analysis.
+            </p>
+          </div>
+          <label htmlFor="reportId" className="mb-3 block text-sm font-semibold text-slate-300">
+            Your LOST Report ID
           </label>
-
           <div className="flex flex-col gap-3 sm:flex-row">
             <input
               id="reportId"
@@ -455,186 +345,117 @@ export default function MatchesPage() {
               value={reportId}
               onChange={(e) => setReportId(e.target.value)}
               placeholder="Example: 5"
-              className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#101625] px-4 py-3 text-white outline-none transition focus:border-violet-400"
+              className="min-w-0 flex-1 rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-violet-400 transition-colors"
             />
-
             <button
               type="submit"
               disabled={loading}
-              className="rounded-xl bg-violet-600 px-7 py-3 text-sm font-semibold transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-7 py-3 text-sm font-bold text-white hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-100 shadow-lg shadow-violet-900/40"
             >
-              {loading ? "Analysing..." : "Find AI Matches →"}
+              {loading ? "🔄 Analysing..." : "Find AI Matches →"}
             </button>
           </div>
-
-          <p className="mt-3 text-xs text-slate-500">
-            Enter an existing active LOST report ID from the database.
-          </p>
+          <p className="mt-3 text-xs text-slate-500">Enter an existing active LOST report ID from the database.</p>
         </form>
 
+        {/* Loading */}
         {loading && (
-          <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
-            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-violet-400 border-t-transparent" />
-
-            <p className="text-sm text-slate-300">
-              Comparing reports and calculating similarity...
-            </p>
+          <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center">
+            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-violet-400 border-t-transparent" />
+            <p className="text-sm text-slate-300">Comparing reports and calculating similarity across signals...</p>
           </div>
         )}
 
+        {/* Error */}
         {error && (
-          <div className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
-            {error}
-          </div>
+          <div className="mt-6 rounded-xl border border-red-800 bg-red-950/40 p-4 text-sm text-red-300">{error}</div>
         )}
 
+        {/* Match Results */}
         {searched && !loading && (
           <section className="mt-10">
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <p className="text-xs tracking-widest text-slate-500">
-                  SEARCH RESULTS
-                </p>
-
-                <h2 className="mt-2 text-2xl font-semibold">
-                  Potential matches
-                </h2>
+                <p className="text-xs tracking-widest text-slate-500 uppercase">AI Match Results</p>
+                <h2 className="mt-2 text-2xl font-bold">Potential Matches</h2>
               </div>
-
-              <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-400">
+              <span className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-400">
                 {matches.length} found
               </span>
             </div>
 
             {matches.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
-                <p className="text-lg font-medium">
-                  No matches found yet
-                </p>
-
-                <p className="mt-2 text-sm text-slate-400">
-                  Try again when more relevant FOUND reports are available.
-                </p>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center backdrop-blur">
+                <div className="text-5xl mb-4">🔍</div>
+                <p className="text-lg font-bold">No Matches Found Yet</p>
+                <p className="mt-2 text-sm text-slate-400">Try again when more relevant FOUND reports are available.</p>
               </div>
             ) : (
               <div className="space-y-6">
                 {matches.map((match) => (
                   <article
                     key={match.found_report_id}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-7"
+                    className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur sm:p-7 transition-all hover:border-violet-500/30"
                   >
                     {/* Match header */}
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs tracking-widest text-slate-500">
-                          AI MATCH RESULT
-                        </p>
-
-                        <h3 className="mt-2 text-xl font-semibold">
-                          LOST #{match.lost_report_id} → FOUND #
-                          {match.found_report_id}
+                        <p className="text-xs tracking-widest text-slate-500 uppercase">AI Match Result</p>
+                        <h3 className="mt-2 text-xl font-bold text-white">
+                          LOST #{match.lost_report_id} → FOUND #{match.found_report_id}
                         </h3>
                       </div>
-
-                      <div className="text-right">
-                        <p className="text-3xl font-bold text-violet-300">
-                          {match.match_percentage.toFixed(1)}%
-                        </p>
-
-                        <p className="mt-1 text-xs text-slate-400">
-                          Match score
-                        </p>
+                      <div className={`rounded-xl border px-4 py-2 text-center ${getMatchColor(match.match_percentage)}`}>
+                        <p className="text-3xl font-black">{match.match_percentage.toFixed(1)}%</p>
+                        <p className="text-[10px] uppercase tracking-wider font-semibold opacity-70">Match Score</p>
                       </div>
                     </div>
 
-                    {/* Overall match progress */}
+                    {/* Progress bar */}
                     <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
                       <div
-                        className="h-full rounded-full bg-violet-500"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            Math.max(0, match.match_percentage)
-                          )}%`,
-                        }}
+                        className={`h-full rounded-full bg-gradient-to-r transition-all duration-700 ${getMatchBarColor(match.match_percentage)}`}
+                        style={{ width: `${Math.min(100, Math.max(0, match.match_percentage))}%` }}
                       />
                     </div>
 
                     {/* Recommendation */}
-                    <div className="mt-5 inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1.5 text-xs font-medium text-violet-300">
-                      {recommendationLabel(match.recommendation)}
+                    <div className="mt-4 inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1.5 text-xs font-semibold text-violet-300">
+                      🏷️ {match.recommendation.replaceAll("_", " ")}
                     </div>
 
-                    {/* LOST and FOUND item comparison */}
+                    {/* Item comparison */}
                     <div className="mt-7">
-                      <h4 className="mb-4 text-sm font-semibold">
-                        Item comparison
-                      </h4>
-
+                      <h4 className="mb-4 text-sm font-bold text-slate-200">Item Comparison</h4>
                       <div className="grid gap-4 md:grid-cols-2">
-                        <ItemCard
-                          label="LOST ITEM"
-                          reportId={match.lost_report_id}
-                          item={match.lost_item}
-                        />
-
-                        <ItemCard
-                          label="FOUND ITEM"
-                          reportId={match.found_report_id}
-                          item={match.found_item}
-                        />
+                        <ItemCard label="LOST ITEM" reportId={match.lost_report_id} item={match.lost_item} />
+                        <ItemCard label="FOUND ITEM" reportId={match.found_report_id} item={match.found_item} />
                       </div>
                     </div>
 
-                    {/* Multimodal Similarity Breakdown */}
+                    {/* Score breakdown */}
                     <div className="mt-8">
                       <div className="mb-4">
-                        <h4 className="text-sm font-semibold">
-                          Multimodal similarity breakdown
-                        </h4>
-
-                        <p className="mt-1 text-xs text-slate-500">
-                          Individual signal scores used by the hybrid
-                          matching engine.
-                        </p>
+                        <h4 className="text-sm font-bold text-slate-200">Multimodal Similarity Breakdown</h4>
+                        <p className="mt-1 text-xs text-slate-500">Individual signal scores used by the hybrid matching engine.</p>
                       </div>
 
                       <div className="grid gap-4 sm:grid-cols-2">
                         {scoreLabels.map(([label, key]) => {
-                          const rawValue =
-                            match.component_scores?.[key];
-
-                          // Do not display unavailable signals as 0%.
-                          if (
-                            rawValue === null ||
-                            rawValue === undefined
-                          ) {
-                            return null;
-                          }
-
+                          const rawValue = match.component_scores?.[key];
+                          if (rawValue === null || rawValue === undefined) return null;
                           const value = rawValue * 100;
 
                           return (
                             <div key={key}>
-                              <div className="mb-2 flex justify-between gap-3 text-xs">
-                                <span className="text-slate-400">
-                                  {label}
-                                </span>
-
-                                <span className="font-medium text-slate-200">
-                                  {value.toFixed(1)}%
-                                </span>
+                              <div className="mb-1.5 flex justify-between gap-3 text-xs">
+                                <span className="text-slate-400">{label}</span>
+                                <span className="font-semibold text-slate-200">{value.toFixed(1)}%</span>
                               </div>
-
                               <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
                                 <div
-                                  className="h-full rounded-full bg-violet-400"
-                                  style={{
-                                    width: `${Math.min(
-                                      100,
-                                      Math.max(0, value)
-                                    )}%`,
-                                  }}
+                                  className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-400 transition-all duration-500"
+                                  style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
                                 />
                               </div>
                             </div>
@@ -643,52 +464,35 @@ export default function MatchesPage() {
                       </div>
 
                       <p className="mt-4 text-xs leading-5 text-slate-500">
-                        CLIP image similarity measures visual similarity
-                        between stored images. Semantic similarity measures
-                        description similarity. Attribute scores represent
-                        additional matching signals.
+                        CLIP image similarity measures visual similarity between stored images. Semantic similarity measures description similarity.
                       </p>
                     </div>
 
-                    {/* Matching engine information */}
+                    {/* Engine info */}
                     <div className="mt-6 border-t border-white/10 pt-4">
-                      <p className="text-xs text-slate-500">
-                        Matching engine: {match.matching_model}
-                      </p>
-
-                      <p className="mt-2 text-xs leading-6 text-slate-400">
-                        {match.note}
-                      </p>
+                      <p className="text-xs text-slate-500">Matching engine: {match.matching_model}</p>
+                      <p className="mt-2 text-xs leading-6 text-slate-400">{match.note}</p>
                     </div>
 
-                    {/* Ownership claim submission */}
+                    {/* Claim submission */}
                     <div className="mt-6 border-t border-white/10 pt-5">
                       <button
                         type="button"
                         onClick={() => submitClaim(match)}
                         disabled={claimLoadingId !== null}
-                        className="w-full rounded-xl bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 text-sm font-bold text-white hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-lg shadow-violet-900/40"
                       >
-                        {claimLoadingId === match.found_report_id
-                          ? "Submitting claim..."
-                          : "Submit Ownership Claim →"}
+                        {claimLoadingId === match.found_report_id ? "🔄 Submitting claim..." : "📝 Submit Ownership Claim →"}
                       </button>
 
                       {claimMessage?.reportId === match.found_report_id && (
-                        <p
-                          className={`mt-3 text-sm ${
-                            claimMessage.type === "success"
-                              ? "text-green-400"
-                              : "text-red-400"
-                          }`}
-                        >
+                        <p className={`mt-3 text-sm font-semibold ${claimMessage.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
                           {claimMessage.message}
                         </p>
                       )}
 
                       <p className="mt-3 text-center text-xs text-slate-500">
-                        You may be asked to provide evidence of ownership.
-                        Final approval is subject to admin verification.
+                        You may be asked to provide evidence of ownership. Final approval is subject to admin verification.
                       </p>
                     </div>
                   </article>
@@ -701,9 +505,7 @@ export default function MatchesPage() {
         {/* Important Notice */}
         <div className="mt-10 rounded-xl border border-amber-400/20 bg-amber-400/[0.05] p-4">
           <p className="text-xs leading-6 text-amber-200/80">
-            Important: AI similarity scores identify potential candidates;
-            they do not establish ownership. Final ownership verification
-            must be completed by an authorised reviewer.
+            ⚠️ Important: AI similarity scores identify potential candidates; they do not establish ownership. Final ownership verification must be completed by an authorised reviewer.
           </p>
         </div>
       </div>

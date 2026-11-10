@@ -271,7 +271,7 @@ export default function ReportPage() {
         color: "",
         eventDateTime: "",
       });
-        setShareFinderContact(false);
+      setShareFinderContact(false);
 
       imagePreviews.forEach((preview) =>
         URL.revokeObjectURL(preview)
@@ -319,301 +319,333 @@ export default function ReportPage() {
   // Loading screen
   if (loading) {
     return (
-      <main className="ll-page min-h-screen grid place-items-center">
-        <p>Preparing your report form...</p>
+      <main className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
+        </div>
+        <div className="text-center space-y-4">
+          <div className="inline-block w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-slate-400 text-sm tracking-widest uppercase">Preparing your form…</p>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="ll-page min-h-screen">
-      <section className="ll-report-page">
-        <div className="ll-report-heading">
-          <span className="ll-eyebrow">
-            <span>✦</span> PES UNIVERSITY · RR CAMPUS
-          </span>
+    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-8">
+      {/* Ambient background orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-blue-500/3 rounded-full blur-3xl" />
+      </div>
 
-          <h1>
-            Help something
-            <br />
-            <span>find its way back.</span>
+      <div className="relative mx-auto max-w-2xl">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <p className="mb-3 text-xs font-bold tracking-[0.3em] text-cyan-400 uppercase">
+            📋 LostLink · Report an Item
+          </p>
+          <h1 className="text-4xl font-black sm:text-5xl leading-tight">
+            <span className="bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
+              Help something find<br />its way back.
+            </span>
           </h1>
-
-          <p>
+          <p className="mt-4 text-slate-400 text-base leading-relaxed max-w-lg mx-auto">
             Share the details of the item you&apos;ve lost or found.
             LostLink will help connect it with its rightful owner.
           </p>
         </div>
 
-        <div className="ll-report-card">
-          {/* Lost / Found selector */}
-          <div className="ll-report-tabs">
-            <button
-              type="button"
-              className={reportType === "LOST" ? "active" : ""}
-              onClick={() => setReportType("LOST")}
-            >
-              I lost something
-            </button>
+        {/* Lost / Found toggle */}
+        <div className="mb-8 flex rounded-2xl border border-slate-800 bg-slate-900/80 p-1.5 backdrop-blur gap-1.5">
+          <button
+            type="button"
+            onClick={() => setReportType("LOST")}
+            className={`flex-1 rounded-xl py-3 px-4 text-sm font-bold transition-all ${
+              reportType === "LOST"
+                ? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-lg shadow-rose-500/20"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            😟 I lost something
+          </button>
+          <button
+            type="button"
+            onClick={() => setReportType("FOUND")}
+            className={`flex-1 rounded-xl py-3 px-4 text-sm font-bold transition-all ${
+              reportType === "FOUND"
+                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            🎉 I found something
+          </button>
+        </div>
 
-            <button
-              type="button"
-              className={reportType === "FOUND" ? "active" : ""}
-              onClick={() => setReportType("FOUND")}
-            >
-              I found something
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            {/* Item information */}
-            <div className="ll-form-section">
-              <h2>Item information</h2>
-              <p>Start with the basic details of the item.</p>
-
-              <label className="ll-field">
-                Item name <span>*</span>
-                <input
-                  required
-                  maxLength={150}
-                  placeholder="e.g. Black iPhone 15"
-                  value={form.title}
-                  onChange={(e) =>
-                    updateField("title", e.target.value)
-                  }
-                />
-              </label>
-
-              <label className="ll-field">
-                Category <span>*</span>
-                <select
-                  required
-                  value={form.categoryId}
-                  onChange={(e) =>
-                    updateField("categoryId", e.target.value)
-                  }
-                >
-                  <option value="">Select a category</option>
-
-                  {categories.map((category) => (
-                    <option
-                      key={category.categoryId}
-                      value={category.categoryId}
-                    >
-                      {category.categoryName}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="ll-field">
-                Description <span>*</span>
-                <textarea
-                  required
-                  rows={5}
-                  maxLength={3000}
-                  placeholder="Describe the item, its appearance and any distinctive features..."
-                  value={form.description}
-                  onChange={(e) =>
-                    updateField("description", e.target.value)
-                  }
-                />
-              </label>
-
-              <div className="ll-form-grid">
-                <label className="ll-field">
-                  Brand
-                  <input
-                    maxLength={100}
-                    placeholder="e.g. Apple"
-                    value={form.brand}
-                    onChange={(e) =>
-                      updateField("brand", e.target.value)
-                    }
-                  />
-                </label>
-
-                <label className="ll-field">
-                  Colour
-                  <input
-                    maxLength={60}
-                    placeholder="e.g. Black"
-                    value={form.color}
-                    onChange={(e) =>
-                      updateField("color", e.target.value)
-                    }
-                  />
-                </label>
-              </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Section 1: Item Information */}
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur space-y-5">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                📦 Item Information
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">Start with the basic details of the item.</p>
             </div>
 
-            {/* Location and date */}
-            <div className="ll-form-section">
-              <h2>Where and when?</h2>
-              <p>
-                Help narrow down where the item was lost or found.
-              </p>
-
-              <label className="ll-field">
-                Campus location
-                <select
-                  value={form.locationId}
-                  onChange={(e) =>
-                    updateField("locationId", e.target.value)
-                  }
-                >
-                  <option value="">
-                    Select a location (optional)
-                  </option>
-
-                  {sortedLocations.map((location) => (
-                    <option
-                      key={location.locationId}
-                      value={location.locationId}
-                    >
-                      {locationLabel(location)}
-                    </option>
-                  ))}
-                </select>
-
-                <small>
-                  Some campus locations are provisional and
-                  have not yet been physically verified.
-                </small>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Item name <span className="text-rose-400">*</span>
               </label>
+              <input
+                required
+                maxLength={150}
+                placeholder="e.g. Black iPhone 15"
+                value={form.title}
+                onChange={(e) => updateField("title", e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/10 transition-all"
+              />
+            </div>
 
-              <label className="ll-field">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Category <span className="text-rose-400">*</span>
+              </label>
+              <select
+                required
+                value={form.categoryId}
+                onChange={(e) => updateField("categoryId", e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none focus:border-cyan-400 transition-colors"
+              >
+                <option value="">Select a category</option>
+                {categories.map((category) => (
+                  <option key={category.categoryId} value={category.categoryId}>
+                    {category.categoryName}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Description <span className="text-rose-400">*</span>
+              </label>
+              <textarea
+                required
+                rows={5}
+                maxLength={3000}
+                placeholder="Describe the item, its appearance and any distinctive features..."
+                value={form.description}
+                onChange={(e) => updateField("description", e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/10 transition-all resize-none"
+              />
+              <p className="text-xs text-slate-600 mt-1 text-right">{form.description.length}/3000</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Brand</label>
+                <input
+                  maxLength={100}
+                  placeholder="e.g. Apple"
+                  value={form.brand}
+                  onChange={(e) => updateField("brand", e.target.value)}
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-400 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Colour</label>
+                <input
+                  maxLength={60}
+                  placeholder="e.g. Black"
+                  value={form.color}
+                  onChange={(e) => updateField("color", e.target.value)}
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-400 transition-all"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: Where & When */}
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur space-y-5">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                📍 Where &amp; When?
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">Help narrow down where the item was {reportType === "LOST" ? "lost" : "found"}.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Campus location</label>
+              <select
+                value={form.locationId}
+                onChange={(e) => updateField("locationId", e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none focus:border-cyan-400 transition-colors"
+              >
+                <option value="">Select a location (optional)</option>
+                {sortedLocations.map((location) => (
+                  <option key={location.locationId} value={location.locationId}>
+                    {locationLabel(location)}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-slate-600 mt-1.5">
+                Some campus locations are provisional and have not yet been physically verified.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
                 {reportType === "LOST"
                   ? "When did you last have the item?"
                   : "When did you find the item?"}
-
-                <input
-                  type="datetime-local"
-                  value={form.eventDateTime}
-                  onChange={(e) =>
-                    updateField("eventDateTime", e.target.value)
-                  }
-                />
               </label>
-              
-              {reportType === "FOUND" && (
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: "10px",
-                    marginTop: "16px",
-                    cursor: "pointer",
-                  }}
-                >
+              <input
+                type="datetime-local"
+                value={form.eventDateTime}
+                onChange={(e) => updateField("eventDateTime", e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none focus:border-cyan-400 transition-all [color-scheme:dark]"
+              />
+            </div>
+
+            {reportType === "FOUND" && (
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="relative mt-0.5 flex-shrink-0">
                   <input
                     type="checkbox"
                     checked={shareFinderContact}
-                    onChange={(e) =>
-                      setShareFinderContact(e.target.checked)
-                    }
-                    style={{ marginTop: "4px", flexShrink: 0 }}
+                    onChange={(e) => setShareFinderContact(e.target.checked)}
+                    className="sr-only"
                   />
-                  <span style={{ fontSize: "14px", lineHeight: 1.5 }}>
-                    I agree to share my contact details. My registered
-                    phone number and email address may be shared with
-                    the rightful claimant only after an administrator
-                    approves the claim. This is optional.
-                  </span>
-                </label>
-              )}
+                  <div
+                    onClick={() => setShareFinderContact(!shareFinderContact)}
+                    className={`w-5 h-5 rounded border-2 transition-all flex items-center justify-center ${
+                      shareFinderContact
+                        ? "bg-cyan-500 border-cyan-500"
+                        : "border-slate-600 bg-slate-800"
+                    }`}
+                  >
+                    {shareFinderContact && (
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <span className="text-sm text-slate-300 leading-relaxed group-hover:text-white transition-colors">
+                  I agree to share my contact details. My registered phone number and email address
+                  may be shared with the rightful claimant only after an administrator approves the
+                  claim. <span className="text-slate-500">This is optional.</span>
+                </span>
+              </label>
+            )}
+          </div>
+
+          {/* Section 3: Item Photos */}
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur space-y-5">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                🖼️ Item Photos
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">Clear photographs help identify and match your item.</p>
             </div>
 
-            {/* Image upload */}
-            <div className="ll-form-section">
-              <h2>Item photos</h2>
-              <p>
-                Clear photographs help identify and match your item.
-              </p>
-
-              <label className="ll-field">
-                Upload images (optional)
-
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Upload images <span className="text-slate-500">(optional)</span>
+              </label>
+              <label className="flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed border-slate-700 bg-slate-800/40 cursor-pointer hover:border-cyan-500/50 hover:bg-slate-800/60 transition-all group">
+                <div className="text-center">
+                  <span className="text-3xl">📸</span>
+                  <p className="text-sm text-slate-400 mt-1 group-hover:text-cyan-400 transition-colors">
+                    Click to upload photos
+                  </p>
+                  <p className="text-xs text-slate-600 mt-0.5">JPG, PNG or WebP · Max 5 images · 5 MB each</p>
+                </div>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   multiple
                   onChange={handleImageSelection}
+                  className="hidden"
                 />
-
-                <small>
-                  JPG, PNG or WebP · Maximum 5 images · 5 MB each
-                </small>
               </label>
-
-              {imagePreviews.length > 0 && (
-                <div className="ll-image-preview-grid">
-                  {imagePreviews.map((preview, index) => (
-                    <div
-                      className="ll-image-preview"
-                      key={preview}
-                    >
-                      <Image
-                        src={preview}
-                        alt={`Selected item photo ${index + 1}`}
-                        width={240}
-                        height={180}
-                        unoptimized
-                        style={{
-                          width: "100%",
-                          height: "180px",
-                          objectFit: "cover",
-                        }}
-                      />
-
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <p className="ll-form-footnote">
-                Do not upload photographs containing sensitive
-                personal information.
-              </p>
             </div>
 
-            {/* Messages */}
-            {error && (
-              <div className="ll-form-message error">
-                {error}
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {imagePreviews.map((preview, index) => (
+                  <div
+                    key={preview}
+                    className="relative rounded-xl overflow-hidden border border-slate-700 group"
+                  >
+                    <Image
+                      src={preview}
+                      alt={`Selected item photo ${index + 1}`}
+                      width={240}
+                      height={180}
+                      unoptimized
+                      style={{
+                        width: "100%",
+                        height: "140px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
 
-            {success && (
-              <div className="ll-form-message success">
-                {success}
-              </div>
-            )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              className="ll-submit-button"
-              disabled={submitting}
-            >
-              {submitting
-                ? "Submitting report..."
-                : `Submit ${reportType.toLowerCase()} report →`}
-            </button>
-
-            <p className="ll-form-footnote">
-              Your report will be associated with your
-              authenticated LostLink account.
+            <p className="text-xs text-slate-600">
+              🔒 Do not upload photographs containing sensitive personal information.
             </p>
-          </form>
-        </div>
-      </section>
+          </div>
+
+          {/* Error message */}
+          {error && (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300 backdrop-blur flex items-start gap-3">
+              <span className="text-lg flex-shrink-0">⚠️</span>
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Success message */}
+          {success && (
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300 backdrop-blur flex items-start gap-3">
+              <span className="text-lg flex-shrink-0">✅</span>
+              <span>{success}</span>
+            </div>
+          )}
+
+          {/* Submit button */}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-4 font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 hover:scale-[1.02] active:scale-100 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 text-base"
+          >
+            {submitting ? (
+              <span className="flex items-center justify-center gap-3">
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block" />
+                Submitting report…
+              </span>
+            ) : (
+              `Submit ${reportType === "LOST" ? "😟 Lost" : "🎉 Found"} Report →`
+            )}
+          </button>
+
+          <p className="text-center text-xs text-slate-600">
+            🔒 Your report will be associated with your authenticated LostLink account.
+          </p>
+        </form>
+      </div>
     </main>
   );
 }

@@ -29,224 +29,183 @@ export default function AdminDashboard() {
   const loadClaims = useCallback(async () => {
     setLoading(true);
     setError("");
-
     try {
-      const response = await fetch("/api/claims", {
-        cache: "no-store",
-      });
-
+      const response = await fetch("/api/claims", { cache: "no-store" });
       const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          result.message || result.error || "Unable to load claims."
-        );
-      }
-
+      if (!response.ok) throw new Error(result.message || result.error || "Unable to load claims.");
       const data = result.data ?? result.claims ?? [];
       setClaims(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Something went wrong."
-      );
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    loadClaims();
-  }, [loadClaims]);
+  useEffect(() => { loadClaims(); }, [loadClaims]);
 
-  async function reviewClaim(
-    claimId: number,
-    decision: "APPROVE" | "REJECT"
-  ) {
-    const confirmation =
-      decision === "APPROVE"
-        ? "Approve this ownership claim?"
-        : "Reject this ownership claim?";
-
+  async function reviewClaim(claimId: number, decision: "APPROVE" | "REJECT") {
+    const confirmation = decision === "APPROVE" ? "Approve this ownership claim?" : "Reject this ownership claim?";
     if (!window.confirm(confirmation)) return;
-
     setProcessing(claimId);
     setMessage("");
     setError("");
-
     try {
       const response = await fetch(`/api/claims/${claimId}/review`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          decision,
-          reviewComments: comments[claimId] || "",
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ decision, reviewComments: comments[claimId] || "" }),
       });
-
       const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          result.message || result.error || "Review action failed."
-        );
-      }
-
-      setMessage(
-        result.message ||
-          (decision === "APPROVE"
-            ? "Claim approved successfully."
-            : "Claim rejected successfully.")
-      );
-
+      if (!response.ok) throw new Error(result.message || result.error || "Review action failed.");
+      setMessage(result.message || (decision === "APPROVE" ? "✅ Claim approved successfully." : "❌ Claim rejected."));
       await loadClaims();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Something went wrong."
-      );
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setProcessing(null);
     }
   }
 
   async function completeHandover(claimId: number) {
-    const confirmation = window.confirm(
-      "Confirm that the item has physically been handed over to the claimant?"
-    );
-
+    const confirmation = window.confirm("Confirm that the item has physically been handed over to the claimant?");
     if (!confirmation) return;
-
     setHandingOver(claimId);
     setMessage("");
     setError("");
-
     try {
-      const response = await fetch(
-        `/api/claims/${claimId}/handover`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
+      const response = await fetch(`/api/claims/${claimId}/handover`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
       const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          result.message || result.error || "Handover failed."
-        );
-      }
-
-      setMessage(
-        result.message || "Item handover completed successfully."
-      );
-
+      if (!response.ok) throw new Error(result.message || result.error || "Handover failed.");
+      setMessage(result.message || "🎉 Item handover completed successfully.");
       await loadClaims();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Handover failed."
-      );
+      setError(err instanceof Error ? err.message : "Handover failed.");
     } finally {
       setHandingOver(null);
     }
   }
 
-  const pendingClaims = claims.filter(
-    (claim) => claim.claim_status === "ADMIN_REVIEW"
-  );
-
-  const approvedClaims = claims.filter(
-    (claim) => claim.claim_status === "APPROVED"
-  );
+  const pendingClaims = claims.filter((c) => c.claim_status === "ADMIN_REVIEW");
+  const approvedClaims = claims.filter((c) => c.claim_status === "APPROVED");
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
-      <div className="mx-auto max-w-6xl">
+      {/* Ambient glows */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
+      </div>
 
-        {/* HEADER */}
-        <header className="mb-8 border-b border-slate-800 pb-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="relative mx-auto max-w-6xl">
+        {/* Header */}
+        <header className="mb-8">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="mb-2 text-sm font-semibold tracking-[0.25em] text-cyan-400">
-                LOSTLINK • ADMINISTRATION
+              <p className="mb-2 text-xs font-bold tracking-[0.3em] text-cyan-400 uppercase">
+                👑 LostLink · Administration
               </p>
-
-              <h1 className="text-3xl font-bold sm:text-4xl">
-                Admin Dashboard
+              <h1 className="text-3xl font-black tracking-tight sm:text-4xl">
+                <span className="bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
+                  Admin Dashboard
+                </span>
               </h1>
-
-              <p className="mt-2 max-w-2xl text-slate-400 text-sm">
-                Review escalated ownership claims, make final decisions,
-                and monitor item handovers.
+              <p className="mt-2 text-sm text-slate-400 max-w-xl">
+                Review escalated ownership claims, make final decisions, and monitor item handovers.
               </p>
             </div>
 
-            {/* Navigation Switcher Tabs */}
-            <div className="flex items-center gap-2 rounded-xl bg-slate-900 p-1.5 border border-slate-800">
+            {/* Nav tabs */}
+            <div className="flex items-center gap-1 rounded-xl bg-slate-900 border border-slate-800 p-1">
               <span className="rounded-lg bg-cyan-600 px-4 py-2 text-xs font-bold text-white shadow-md">
-                Claims Review
+                📋 Claims Review
               </span>
               <Link
                 href="/admin/analytics"
-                className="rounded-lg px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+                className="rounded-lg px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
               >
-                Analytics & Reports →
+                📊 Analytics →
               </Link>
             </div>
           </div>
+
+          {/* Quick stat row */}
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {[
+              { label: "Awaiting Decision", value: pendingClaims.length, color: "amber", icon: "⏳" },
+              { label: "Approved", value: approvedClaims.length, color: "emerald", icon: "✅" },
+              { label: "Total Claims", value: claims.length, color: "cyan", icon: "📋" },
+              { label: "Other Status", value: claims.length - pendingClaims.length - approvedClaims.length, color: "slate", icon: "📊" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className={`rounded-2xl border p-4 backdrop-blur ${
+                  stat.color === "amber" ? "border-amber-900/40 bg-amber-950/10" :
+                  stat.color === "emerald" ? "border-emerald-900/40 bg-emerald-950/10" :
+                  stat.color === "cyan" ? "border-cyan-900/40 bg-slate-900/80" :
+                  "border-slate-800 bg-slate-900/80"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <p className={`text-xs font-semibold uppercase tracking-wider ${
+                    stat.color === "amber" ? "text-amber-400" :
+                    stat.color === "emerald" ? "text-emerald-400" :
+                    stat.color === "cyan" ? "text-cyan-400" : "text-slate-500"
+                  }`}>{stat.label}</p>
+                  <span>{stat.icon}</span>
+                </div>
+                <p className={`text-3xl font-black ${
+                  stat.color === "amber" ? "text-amber-300" :
+                  stat.color === "emerald" ? "text-emerald-300" :
+                  stat.color === "cyan" ? "text-cyan-300" : "text-slate-400"
+                }`}>{stat.value}</p>
+              </div>
+            ))}
+          </div>
         </header>
 
-        {/* MESSAGES */}
+        {/* Messages */}
         {message && (
-          <div className="mb-5 rounded-lg border border-green-700 bg-green-950/40 p-4 text-green-300">
+          <div className="mb-5 rounded-xl border border-emerald-700/50 bg-emerald-950/40 p-4 text-emerald-300 text-sm">
             {message}
           </div>
         )}
-
         {error && (
-          <div className="mb-5 rounded-lg border border-red-700 bg-red-950/40 p-4 text-red-300">
+          <div className="mb-5 rounded-xl border border-red-700/50 bg-red-950/40 p-4 text-red-300 text-sm">
             {error}
           </div>
         )}
 
-        {/* CLAIMS AWAITING ADMIN REVIEW */}
+        {/* PENDING CLAIMS */}
         <section className="mb-10">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-semibold">
-                Claims awaiting decision
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-400">
-                {pendingClaims.length} claim(s) awaiting admin review
-              </p>
+              <h2 className="text-xl font-bold">⏳ Claims Awaiting Decision</h2>
+              <p className="mt-1 text-sm text-slate-400">{pendingClaims.length} claim(s) awaiting admin review</p>
             </div>
-
             <button
               onClick={loadClaims}
               disabled={loading}
-              className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium hover:bg-slate-800 disabled:opacity-50"
+              className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800 disabled:opacity-50 transition-colors"
             >
-              {loading ? "Refreshing..." : "Refresh"}
+              {loading ? "Loading..." : "↻ Refresh"}
             </button>
           </div>
 
           {loading ? (
-            <div className="rounded-xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-400">
-              Loading claims...
+            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-12 text-center text-slate-400">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+              <p className="mt-4 text-sm">Loading claims...</p>
             </div>
           ) : pendingClaims.length === 0 ? (
-            <div className="rounded-xl border border-slate-800 bg-slate-900 p-8 text-center">
-              <h3 className="text-lg font-semibold">
-                No claims awaiting review
-              </h3>
-
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center backdrop-blur">
+              <div className="text-5xl mb-4">✅</div>
+              <h3 className="text-lg font-bold">No Claims Awaiting Review</h3>
               <p className="mt-2 text-sm text-slate-400">
-                Escalated claims will appear here when they are ready
-                for an administrator decision.
+                Escalated claims will appear here when they are ready for an administrator decision.
               </p>
             </div>
           ) : (
@@ -254,116 +213,75 @@ export default function AdminDashboard() {
               {pendingClaims.map((claim) => (
                 <article
                   key={claim.claim_id}
-                  className="rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-lg sm:p-6"
+                  className="rounded-2xl border border-amber-900/30 bg-slate-900/80 p-6 backdrop-blur transition-all hover:border-amber-700/40 shadow-lg"
                 >
                   <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm text-slate-400">
-                        Claim #{claim.claim_id}
-                      </p>
-
-                      <h3 className="mt-1 text-xl font-bold">
-                        {claim.lost_item_title ||
-                          claim.found_item_title ||
-                          `Ownership Claim #${claim.claim_id}`}
+                      <p className="text-xs text-slate-500">Claim #{claim.claim_id}</p>
+                      <h3 className="mt-1 text-xl font-bold text-white">
+                        {claim.lost_item_title || claim.found_item_title || `Ownership Claim #${claim.claim_id}`}
                       </h3>
                     </div>
-
-                    <span className="rounded-full border border-amber-700 bg-amber-950/50 px-3 py-1 text-xs font-semibold text-amber-300">
-                      ADMIN REVIEW
+                    <span className="rounded-full border border-amber-700/60 bg-amber-950/40 px-3 py-1 text-xs font-bold text-amber-300">
+                      ⏳ ADMIN REVIEW
                     </span>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg bg-slate-800/70 p-4">
-                      <p className="text-xs font-semibold tracking-wider text-slate-400">
-                        CLAIMANT
-                      </p>
-
-                      <p className="mt-2 font-semibold">
-                        {claim.claimant_name ||
-                          `User ${claim.claimant_id}`}
-                      </p>
-
-                      <p className="mt-1 text-sm text-slate-400">
-                        User ID: {claim.claimant_id}
-                      </p>
-
+                    <div className="rounded-xl bg-slate-800/70 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">👤 Claimant</p>
+                      <p className="mt-2 font-bold text-white">{claim.claimant_name || `User ${claim.claimant_id}`}</p>
+                      <p className="mt-1 text-xs text-slate-500">ID: {claim.claimant_id}</p>
                       <p className="mt-2 text-xs text-slate-500">
-                        Submitted:{" "}
-                        {claim.submitted_at
-                          ? new Date(claim.submitted_at).toLocaleString()
-                          : "Not available"}
+                        Submitted: {claim.submitted_at ? new Date(claim.submitted_at).toLocaleString() : "N/A"}
                       </p>
                     </div>
-
-                    <div className="rounded-lg bg-slate-800/70 p-4">
-                      <p className="text-xs font-semibold tracking-wider text-slate-400">
-                        RELATED REPORTS
-                      </p>
-
-                      <p className="mt-2 text-sm">
-                        Lost report:{" "}
-                        <span className="font-semibold">
-                          #{claim.lost_report_id}
-                        </span>
-                      </p>
-
-                      <p className="mt-1 text-sm">
-                        Found report:{" "}
-                        <span className="font-semibold">
-                          #{claim.found_report_id}
-                        </span>
-                      </p>
+                    <div className="rounded-xl bg-slate-800/70 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">📄 Related Reports</p>
+                      <div className="mt-2 space-y-1">
+                        <p className="text-sm">
+                          <span className="text-slate-400">Lost:</span>{" "}
+                          <span className="font-bold">#{claim.lost_report_id}</span>
+                        </p>
+                        <p className="text-sm">
+                          <span className="text-slate-400">Found:</span>{" "}
+                          <span className="font-bold">#{claim.found_report_id}</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
 
                   <div className="mt-5">
                     <label
                       htmlFor={`comments-${claim.claim_id}`}
-                      className="mb-2 block text-sm font-medium text-slate-300"
+                      className="mb-2 block text-sm font-semibold text-slate-300"
                     >
-                      Admin review comments
+                      Admin Review Comments
                     </label>
-
                     <textarea
                       id={`comments-${claim.claim_id}`}
                       value={comments[claim.claim_id] || ""}
-                      onChange={(event) =>
-                        setComments((previous) => ({
-                          ...previous,
-                          [claim.claim_id]: event.target.value,
-                        }))
-                      }
+                      onChange={(e) => setComments((prev) => ({ ...prev, [claim.claim_id]: e.target.value }))}
                       placeholder="Enter the reason for your decision..."
                       rows={3}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-950 p-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-500"
+                      className="w-full rounded-xl border border-slate-700 bg-slate-950 p-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-cyan-500 transition-colors"
                     />
                   </div>
 
                   <div className="mt-5 flex flex-wrap gap-3">
                     <button
-                      onClick={() =>
-                        reviewClaim(claim.claim_id, "APPROVE")
-                      }
+                      onClick={() => reviewClaim(claim.claim_id, "APPROVE")}
                       disabled={processing === claim.claim_id}
-                      className="rounded-lg bg-green-700 px-5 py-2.5 text-sm font-semibold hover:bg-green-600 disabled:opacity-50"
+                      className="rounded-xl bg-emerald-700 px-6 py-2.5 text-sm font-bold text-white hover:bg-emerald-600 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-100 shadow-lg shadow-emerald-900/40"
                     >
-                      {processing === claim.claim_id
-                        ? "Processing..."
-                        : "Approve Claim"}
+                      {processing === claim.claim_id ? "Processing..." : "✅ Approve Claim"}
                     </button>
-
                     <button
-                      onClick={() =>
-                        reviewClaim(claim.claim_id, "REJECT")
-                      }
+                      onClick={() => reviewClaim(claim.claim_id, "REJECT")}
                       disabled={processing === claim.claim_id}
-                      className="rounded-lg bg-red-700 px-5 py-2.5 text-sm font-semibold hover:bg-red-600 disabled:opacity-50"
+                      className="rounded-xl bg-red-800 px-6 py-2.5 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-100"
                     >
-                      {processing === claim.claim_id
-                        ? "Processing..."
-                        : "Reject Claim"}
+                      {processing === claim.claim_id ? "Processing..." : "❌ Reject Claim"}
                     </button>
                   </div>
                 </article>
@@ -375,73 +293,47 @@ export default function AdminDashboard() {
         {/* APPROVED CLAIMS - HANDOVER */}
         <section className="border-t border-slate-800 pt-8">
           <div className="mb-5">
-            <h2 className="text-xl font-semibold">
-              Approved claims — Item handover
-            </h2>
-
+            <h2 className="text-xl font-bold">✅ Approved Claims — Item Handover</h2>
             <p className="mt-1 text-sm text-slate-400">
-              Complete the handover after the physical item has been
-              given to the verified claimant.
+              Complete the handover after the physical item has been given to the verified claimant.
             </p>
           </div>
 
           {approvedClaims.length === 0 ? (
-            <div className="rounded-xl border border-slate-800 bg-slate-900 p-8 text-center">
-              <h3 className="font-semibold">
-                No approved claims awaiting handover
-              </h3>
-
-              <p className="mt-2 text-sm text-slate-400">
-                Claims approved by an administrator will appear here.
-              </p>
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center backdrop-blur">
+              <div className="text-5xl mb-4">🎁</div>
+              <h3 className="font-bold text-white">No Approved Claims Awaiting Handover</h3>
+              <p className="mt-2 text-sm text-slate-400">Claims approved by an administrator will appear here.</p>
             </div>
           ) : (
             <div className="space-y-5">
               {approvedClaims.map((claim) => (
                 <article
                   key={claim.claim_id}
-                  className="rounded-xl border border-green-900 bg-slate-900 p-5 sm:p-6"
+                  className="rounded-2xl border border-emerald-900/40 bg-slate-900/80 p-5 backdrop-blur sm:p-6"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm text-slate-400">
-                        Claim #{claim.claim_id}
-                      </p>
-
-                      <h3 className="mt-1 text-lg font-bold">
-                        {claim.lost_item_title ||
-                          claim.found_item_title ||
-                          `Ownership Claim #${claim.claim_id}`}
+                      <p className="text-sm text-slate-400">Claim #{claim.claim_id}</p>
+                      <h3 className="mt-1 text-lg font-bold text-white">
+                        {claim.lost_item_title || claim.found_item_title || `Ownership Claim #${claim.claim_id}`}
                       </h3>
-
                       <p className="mt-2 text-sm text-slate-400">
-                        Claimant: User {claim.claimant_id}
-                      </p>
-
-                      <p className="mt-1 text-sm text-slate-400">
-                        Lost Report: #{claim.lost_report_id}
-                        {" • "}
-                        Found Report: #{claim.found_report_id}
+                        Claimant: User {claim.claimant_id} · Lost #{claim.lost_report_id} · Found #{claim.found_report_id}
                       </p>
                     </div>
-
-                    <span className="rounded-full border border-green-700 bg-green-950/50 px-3 py-1 text-xs font-semibold text-green-300">
-                      APPROVED
+                    <span className="rounded-full border border-emerald-700/50 bg-emerald-950/40 px-3 py-1 text-xs font-bold text-emerald-300">
+                      ✅ APPROVED
                     </span>
                   </div>
 
                   <div className="mt-5">
                     <button
                       onClick={() => completeHandover(claim.claim_id)}
-                      disabled={
-                        handingOver === claim.claim_id ||
-                        processing === claim.claim_id
-                      }
-                      className="rounded-lg bg-cyan-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-cyan-600 disabled:opacity-50"
+                      disabled={handingOver === claim.claim_id || processing === claim.claim_id}
+                      className="rounded-xl bg-gradient-to-r from-cyan-700 to-blue-700 px-6 py-2.5 text-sm font-bold text-white hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-100 shadow-lg shadow-cyan-900/40"
                     >
-                      {handingOver === claim.claim_id
-                        ? "Completing handover..."
-                        : "Complete Handover"}
+                      {handingOver === claim.claim_id ? "Completing handover..." : "🤝 Complete Handover"}
                     </button>
                   </div>
                 </article>
@@ -449,6 +341,10 @@ export default function AdminDashboard() {
             </div>
           )}
         </section>
+
+        <footer className="mt-12 text-center text-xs text-slate-700">
+          LOSTLINK ADMINISTRATION · PES UNIVERSITY RR CAMPUS
+        </footer>
       </div>
     </main>
   );
