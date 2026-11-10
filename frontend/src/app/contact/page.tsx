@@ -24,8 +24,67 @@ export default function ContactPage() {
             </span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-400">
-            Need help using LostLink? Choose the option that best describes what you need.
-            You can use the platform&apos;s reporting and claim workflows to get started.
+            Need help using LostLink? Get in touch with our team directly, or explore the platform&apos;s self-service reporting and claim verification options.
+          </p>
+        </div>
+
+        {/* PRIMARY DIRECT CONTACT CARD */}
+        <div className="mb-10 rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-950/40 via-slate-900/90 to-blue-950/40 p-6 sm:p-8 backdrop-blur shadow-2xl">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-5">
+            <div>
+              <span className="inline-block rounded-full bg-cyan-500/20 border border-cyan-400/30 px-3 py-1 text-xs font-bold text-cyan-300 uppercase tracking-widest">
+                Direct Contact &amp; Support Lead
+              </span>
+              <h2 className="mt-2 text-2xl font-black text-white">UTHKARSHA</h2>
+              <p className="text-sm text-slate-400">LostLink Campus Administrator &amp; System Lead</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="flex h-3 w-3 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              <span className="text-xs font-semibold text-emerald-400">Available for Assistance</span>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {/* Email Contact */}
+            <a
+              href="mailto:uthkarsha366@gmail.com"
+              className="flex items-center gap-4 rounded-xl border border-slate-700/60 bg-slate-900/80 p-4 transition-all hover:border-cyan-400/50 hover:bg-slate-800/80 group"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-2xl group-hover:scale-110 transition-transform">
+                ✉️
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Email Address</p>
+                <p className="mt-0.5 font-bold text-cyan-300 text-sm sm:text-base truncate group-hover:text-cyan-200">
+                  uthkarsha366@gmail.com
+                </p>
+                <p className="text-[11px] text-slate-500 mt-0.5">Click to send an email</p>
+              </div>
+            </a>
+
+            {/* Phone Contact */}
+            <a
+              href="tel:9845779052"
+              className="flex items-center gap-4 rounded-xl border border-slate-700/60 bg-slate-900/80 p-4 transition-all hover:border-emerald-400/50 hover:bg-slate-800/80 group"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-2xl group-hover:scale-110 transition-transform">
+                📞
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Phone Number</p>
+                <p className="mt-0.5 font-bold text-emerald-300 text-sm sm:text-base tracking-wide group-hover:text-emerald-200">
+                  +91 98457 79052
+                </p>
+                <p className="text-[11px] text-slate-500 mt-0.5">Call or WhatsApp</p>
+              </div>
+            </a>
+          </div>
+
+          <p className="mt-5 text-xs text-slate-500 border-t border-slate-800/60 pt-4">
+            📍 PES University, RR Campus · Quick escalation for lost items, claim verifications, and physical handover inquiries.
           </p>
         </div>
 
