@@ -75,8 +75,11 @@ export async function GET(request: NextRequest) {
     rangeLabel = "Last 30 Days";
   }
 
+  // Pad endDate by +1 day so UTC vs IST timezones never truncate today's real records
+  const queryEnd = new Date(endDate.getTime() + 24 * 60 * 60 * 1000);
   const startIso = startDate.toISOString().slice(0, 19).replace("T", " ");
-  const endIso = endDate.toISOString().slice(0, 19).replace("T", " ");
+  const endIso = queryEnd.toISOString().slice(0, 19).replace("T", " ");
+  const displayEndIso = endDate.toISOString().slice(0, 19).replace("T", " ");
 
   try {
     // 3. KPI Statistics Cards using Conditional Aggregation
@@ -220,7 +223,7 @@ export async function GET(request: NextRequest) {
         range,
         rangeLabel,
         startDate: startIso,
-        endDate: endIso,
+        endDate: displayEndIso,
       },
       kpis,
       charts: {
