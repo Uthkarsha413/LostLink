@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CampusLocationSelector from "../components/CampusLocationSelector";
 
 type Category = {
   categoryId: number;
@@ -477,22 +478,23 @@ export default function ReportPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Campus location</label>
-              <select
-                value={form.locationId}
-                onChange={(e) => updateField("locationId", e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none focus:border-cyan-400 transition-colors"
-              >
-                <option value="">Select a location (optional)</option>
-                {sortedLocations.map((location) => (
-                  <option key={location.locationId} value={location.locationId}>
-                    {locationLabel(location)}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-slate-600 mt-1.5">
-                Some campus locations are provisional and have not yet been physically verified.
-              </p>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-slate-300">Campus location</label>
+                {form.locationId && (
+                  <button
+                    type="button"
+                    onClick={() => updateField("locationId", "")}
+                    className="text-xs text-rose-400 hover:text-rose-300 underline"
+                  >
+                    Clear location
+                  </button>
+                )}
+              </div>
+              <CampusLocationSelector
+                locations={locations as any}
+                selectedId={form.locationId}
+                onChange={(val) => updateField("locationId", val)}
+              />
             </div>
 
             <div>
