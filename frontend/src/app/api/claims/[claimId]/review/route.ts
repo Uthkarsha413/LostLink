@@ -223,6 +223,27 @@ const comments =
 
     // 7. Record timeline stage 5 for both reports.
     try {
+      let eventTitle = "Claim Reviewed";
+      let eventDescription = "";
+
+      if (reviewerRole === "MODERATOR") {
+        if (decision === "ESCALATE") {
+          eventTitle = "Claim Verified & Escalated by Moderator";
+          eventDescription = `Moderator verified the evidence and forwarded this claim to Administrator for approval.${comments ? ` Note: "${comments}"` : ""}`;
+        } else {
+          eventTitle = "Additional Evidence Requested by Moderator";
+          eventDescription = `Moderator requested additional verification evidence from claimant.${comments ? ` Reason: "${comments}"` : ""}`;
+        }
+      } else {
+        if (newStatus === "APPROVED") {
+          eventTitle = "Claim Approved by Administrator";
+          eventDescription = `Ownership claim has been approved. Secure OTP handover verification is now unlocked.${comments ? ` Note: "${comments}"` : ""}`;
+        } else {
+          eventTitle = "Claim Rejected by Administrator";
+          eventDescription = `Ownership claim was rejected.${comments ? ` Reason: "${comments}"` : ""}`;
+        }
+      }
+
       await recordClaimTimelineEvents(
         claim.lost_report_id,
         claim.found_report_id,
@@ -232,14 +253,8 @@ const comments =
           actorRole: reviewerRole,
           stageNumber: 5,
           eventType: "CLAIM_REVIEWED",
-          eventTitle:
-            newStatus === "APPROVED"
-              ? "Claim Approved by Administrator"
-              : "Claim Rejected by Administrator",
-          eventDescription:
-            newStatus === "APPROVED"
-              ? "Ownership claim has been approved. Secure OTP handover verification is now unlocked."
-              : `Ownership claim was rejected.${comments ? ` Reason: ${comments}` : ""}`,
+          eventTitle,
+          eventDescription,
           itemStatus: newStatus === "APPROVED" ? "CLAIMED" : "ACTIVE",
         },
         connection

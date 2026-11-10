@@ -246,12 +246,20 @@ export async function GET() {
            c.updated_at,
            c.claimant_id,
            claimant.full_name AS claimant_name,
+           claimant.email AS claimant_email,
            found.user_id AS finder_id,
            finder.full_name AS finder_name,
+           finder.email AS finder_email,
            c.lost_report_id,
            lost.title AS lost_item_title,
+           lost.description AS lost_description,
+           lost.brand AS lost_brand,
+           lost.color AS lost_color,
            c.found_report_id,
            found.title AS found_item_title,
+           found.description AS found_description,
+           found.brand AS found_brand,
+           found.color AS found_color,
            c.match_id,
            ch.otp_verified_at,
            ch.finder_confirmed_at,
@@ -302,6 +310,48 @@ export async function GET() {
           ? [session.userId, session.userId]
           : [session.userId, session.userId, session.userId, session.userId]
       );
+
+      // Attach evidence and previous review comments to each claim
+      if (claims.length > 0) {
+        const claimIds = (claims as any[]).map((c) => c.claim_id);
+        const placeholders = claimIds.map(() => '?').join(',');
+
+        const [evidenceRows] = await connection.execute<RowDataPacket[]>(
+          `SELECT evidence_id, claim_id, evidence_type, evidence_text, storage_key, submitted_at
+           FROM claim_evidence
+           WHERE claim_id IN (${placeholders})
+           ORDER BY submitted_at ASC`,
+          claimIds
+        );
+
+        const [reviewRows] = await connection.execute<RowDataPacket[]>(
+          `SELECT r.review_id, r.claim_id, r.reviewer_id, u.full_name AS reviewer_name, r.reviewer_role, r.decision, r.review_comments, r.reviewed_at
+           FROM claim_reviews r
+           JOIN users u ON u.user_id = r.reviewer_id
+           WHERE r.claim_id IN (${placeholders})
+           ORDER BY r.reviewed_at ASC`,
+          claimIds
+        );
+
+        const evidenceMap: Record<number, RowDataPacket[]> = {};
+        for (const ev of evidenceRows) {
+          const cid = (ev as any).claim_id;
+          if (!evidenceMap[cid]) evidenceMap[cid] = [];
+          evidenceMap[cid].push(ev);
+        }
+
+        const reviewsMap: Record<number, RowDataPacket[]> = {};
+        for (const rev of reviewRows) {
+          const cid = (rev as any).claim_id;
+          if (!reviewsMap[cid]) reviewsMap[cid] = [];
+          reviewsMap[cid].push(rev);
+        }
+
+        for (const c of claims as any[]) {
+          c.evidence = evidenceMap[c.claim_id] || [];
+          c.reviews = reviewsMap[c.claim_id] || [];
+        }
+      }
 
       return NextResponse.json({
         success: true,

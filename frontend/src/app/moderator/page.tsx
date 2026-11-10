@@ -2,16 +2,46 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+type Evidence = {
+  evidence_id: number;
+  claim_id: number;
+  evidence_type: string;
+  evidence_text: string;
+  storage_key?: string | null;
+  submitted_at: string;
+};
+
+type Review = {
+  review_id: number;
+  reviewer_name: string;
+  reviewer_role: string;
+  decision: string;
+  review_comments: string | null;
+  reviewed_at: string;
+};
+
 type Claim = {
   claim_id: number;
   claim_status: string;
   submitted_at: string;
   claimant_id: number;
   claimant_name: string;
+  claimant_email?: string;
+  finder_id?: number;
+  finder_name?: string;
+  finder_email?: string;
   lost_report_id: number;
   lost_item_title: string;
+  lost_description?: string;
+  lost_brand?: string | null;
+  lost_color?: string | null;
   found_report_id: number;
   found_item_title: string;
+  found_description?: string;
+  found_brand?: string | null;
+  found_color?: string | null;
+  evidence?: Evidence[];
+  reviews?: Review[];
 };
 
 type PendingImage = {
@@ -482,22 +512,72 @@ export default function ModeratorPage() {
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">👤 Claimant</p>
                         <p className="mt-2 font-semibold text-white">{claim.claimant_name}</p>
-                        <p className="text-xs text-slate-500">User ID: {claim.claimant_id}</p>
+                        <p className="text-xs text-slate-500">User ID: {claim.claimant_id}{claim.claimant_email ? ` · ${claim.claimant_email}` : ""}</p>
                       </div>
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">📅 Submitted</p>
                         <p className="mt-2 font-medium text-slate-200">{new Date(claim.submitted_at).toLocaleString()}</p>
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">🔍 Lost Item</p>
-                        <p className="mt-2 font-semibold text-white">{claim.lost_item_title}</p>
-                        <p className="text-xs text-slate-500">Report #{claim.lost_report_id}</p>
+                      <div className="rounded-lg border border-rose-900/30 bg-slate-900/60 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-rose-400">🔍 Lost Item Details</p>
+                        <p className="mt-1 font-semibold text-white">{claim.lost_item_title}</p>
+                        <p className="text-xs text-slate-400 mt-1">Report #{claim.lost_report_id}</p>
+                        {claim.lost_description && (
+                          <p className="mt-2 text-xs text-slate-300 italic border-l-2 border-rose-500/50 pl-2">"{claim.lost_description}"</p>
+                        )}
+                        <div className="mt-2 flex gap-2 text-[11px] text-slate-400">
+                          {claim.lost_brand && <span>Brand: <strong className="text-slate-200">{claim.lost_brand}</strong></span>}
+                          {claim.lost_color && <span>Color: <strong className="text-slate-200">{claim.lost_color}</strong></span>}
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">📦 Found Item</p>
-                        <p className="mt-2 font-semibold text-white">{claim.found_item_title}</p>
-                        <p className="text-xs text-slate-500">Report #{claim.found_report_id}</p>
+                      <div className="rounded-lg border border-teal-900/30 bg-slate-900/60 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-teal-400">📦 Found Item Details</p>
+                        <p className="mt-1 font-semibold text-white">{claim.found_item_title}</p>
+                        <p className="text-xs text-slate-400 mt-1">Report #{claim.found_report_id} {claim.finder_name ? `· Found by ${claim.finder_name}` : ""}</p>
+                        {claim.found_description && (
+                          <p className="mt-2 text-xs text-slate-300 italic border-l-2 border-teal-500/50 pl-2">"{claim.found_description}"</p>
+                        )}
+                        <div className="mt-2 flex gap-2 text-[11px] text-slate-400">
+                          {claim.found_brand && <span>Brand: <strong className="text-slate-200">{claim.found_brand}</strong></span>}
+                          {claim.found_color && <span>Color: <strong className="text-slate-200">{claim.found_color}</strong></span>}
+                        </div>
                       </div>
+                    </div>
+
+                    {/* OWNERSHIP EVIDENCE DOSSIER */}
+                    <div className="mt-4 rounded-xl border border-indigo-500/30 bg-indigo-950/20 p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                          <span>🧾</span> Ownership Evidence Dossier
+                        </h4>
+                        <span className="rounded-full bg-indigo-500/20 border border-indigo-400/30 px-2 py-0.5 text-[10px] font-bold text-indigo-300">
+                          {claim.evidence && claim.evidence.length > 0 ? `${claim.evidence.length} piece(s) of evidence` : "No evidence attached yet"}
+                        </span>
+                      </div>
+
+                      {claim.evidence && claim.evidence.length > 0 ? (
+                        <div className="space-y-2.5">
+                          {claim.evidence.map((ev, idx) => (
+                            <div key={ev.evidence_id || idx} className="rounded-lg border border-slate-700/60 bg-slate-900/80 p-3 text-xs">
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-cyan-300 uppercase tracking-wider text-[11px]">
+                                  {ev.evidence_type === "PURCHASE_PROOF" ? "🧾 Purchase Proof / Receipt" :
+                                   ev.evidence_type === "UNIQUE_MARK" ? "🔍 Unique Mark / Scratch / Serial" :
+                                   ev.evidence_type === "DESCRIPTION" ? "📝 Private Description" : "📎 Other Evidence"}
+                                </span>
+                                <span className="text-[10px] text-slate-500">{new Date(ev.submitted_at).toLocaleString()}</span>
+                              </div>
+                              <p className="mt-2 text-sm text-slate-200 bg-slate-950/70 p-2.5 rounded border border-slate-800 leading-relaxed font-mono">
+                                {ev.evidence_text}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="rounded-lg border border-dashed border-slate-700 p-3 text-center text-xs text-slate-400">
+                          ⚠️ The claimant has not yet provided text/file evidence. You can click <strong>"Request More Info"</strong> below to ask for serial numbers, receipts, or distinctive marks.
+                        </div>
+                      )}
                     </div>
 
                     {canReview && (

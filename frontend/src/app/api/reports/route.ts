@@ -375,6 +375,31 @@ export async function POST(request: NextRequest) {
       ]
     );
 
+    // Record Stage 1: Report Submitted in Item Timeline
+    try {
+      await connection.execute(
+        `INSERT INTO item_timeline_events (
+          report_id,
+          claim_id,
+          actor_user_id,
+          actor_role,
+          stage_number,
+          event_type,
+          event_title,
+          event_description,
+          item_status,
+          created_at
+        ) VALUES (?, NULL, ?, 'STUDENT', 1, 'REPORT_SUBMITTED', 'Report Submitted', ?, 'ACTIVE', NOW())`,
+        [
+          result.insertId,
+          session.userId,
+          `Initial ${reportType.toLowerCase()} report submitted for "${title}".`,
+        ]
+      );
+    } catch (timelineErr) {
+      console.error("Timeline Stage 1 record error:", timelineErr);
+    }
+
     await connection.commit();
 
     return NextResponse.json(
