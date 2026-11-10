@@ -18,18 +18,20 @@ type Match = {
   found_report_id: number;
   lost_item: ItemDetails;
   found_item: ItemDetails;
-  qdrant_similarity: number;
+  qdrant_similarity: number | null;
+  clip_image_similarity: number | null;
   matching_model: string;
   final_score: number;
   match_percentage: number;
   recommendation: string;
   component_scores: {
-    semantic: number;
-    category: number;
-    brand: number;
-    colour: number;
-    location: number;
-    time: number;
+    semantic: number | null;
+    clip_image: number | null;
+    category: number | null;
+    brand: number | null;
+    colour: number | null;
+    location: number | null;
+    time: number | null;
   };
   available_signals: number;
   note: string;
@@ -107,29 +109,23 @@ function ItemCard({
 }
 
 export default function MatchesPage() {
-  // Existing hybrid matching state
   const [reportId, setReportId] = useState("5");
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [searched, setSearched] = useState(false);
 
-  // CLIP search state
   const [clipQuery, setClipQuery] = useState("");
-  const [clipTarget, setClipTarget] =
-    useState<"LOST" | "FOUND">("FOUND");
+  const [clipTarget, setClipTarget] = useState<"LOST" | "FOUND">("FOUND");
   const [clipResults, setClipResults] = useState<ClipResult[]>([]);
   const [clipLoading, setClipLoading] = useState(false);
   const [clipError, setClipError] = useState("");
   const [clipSearched, setClipSearched] = useState(false);
 
-  // Claim state
-  const [claimLoadingId, setClaimLoadingId] =
-    useState<number | null>(null);
-  const [claimMessage, setClaimMessage] =
-    useState<ClaimMessage | null>(null);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [searched, setSearched] = useState(false);
 
-  // Existing hybrid matching function
+  const [claimLoadingId, setClaimLoadingId] = useState<number | null>(null);
+  const [claimMessage, setClaimMessage] = useState<ClaimMessage | null>(null);
+
   async function findMatches(e: React.FormEvent) {
     e.preventDefault();
 
@@ -162,7 +158,6 @@ export default function MatchesPage() {
     }
   }
 
-  // CLIP natural-language search function
   async function findClipMatches(e: React.FormEvent) {
     e.preventDefault();
 
@@ -201,7 +196,6 @@ export default function MatchesPage() {
     }
   }
 
-  // Existing ownership claim function
   async function submitClaim(match: Match) {
     setClaimLoadingId(match.found_report_id);
     setClaimMessage(null);
@@ -250,6 +244,7 @@ export default function MatchesPage() {
 
   const scoreLabels = [
     ["Semantic similarity", "semantic"],
+    ["CLIP image similarity", "clip_image"],
     ["Category", "category"],
     ["Brand", "brand"],
     ["Colour", "colour"],
@@ -267,7 +262,6 @@ export default function MatchesPage() {
           ← Back to LostLink
         </Link>
 
-        {/* Page heading */}
         <div className="mb-8">
           <p className="mb-3 text-xs font-semibold tracking-[0.25em] text-violet-400">
             LOSTLINK INTELLIGENCE
@@ -279,7 +273,8 @@ export default function MatchesPage() {
 
           <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
             Discover potential lost-and-found connections using semantic
-            similarity, item attributes and campus information.
+            similarity, visual intelligence, item attributes and campus
+            information.
           </p>
         </div>
 
@@ -365,19 +360,12 @@ export default function MatchesPage() {
                   No matching images found. Try another description.
                 </p>
               ) : (
-                <div className="mt-4 space-y-4">
+                <div className="mt-4 space-y-3">
                   {clipResults.map((item) => (
-                    <article
+                    <div
                       key={`${item.report_id}-${item.image_id}`}
                       className="rounded-xl border border-white/10 bg-[#101625] p-4"
                     >
-                      {/* Retrieved item image */}
-                      <img
-                        src={`/api/reports/${item.report_id}/images?imageId=${item.image_id}`}
-                        alt={item.title || "Matched lost-and-found item"}
-                        className="mb-4 h-52 w-full rounded-lg border border-white/10 object-contain bg-[#080b14]"
-                      />
-
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
                           <p className="text-xs font-semibold tracking-wider text-violet-400">
@@ -433,7 +421,7 @@ export default function MatchesPage() {
                       <p className="mt-3 text-xs text-slate-500">
                         Image quality status: {item.image_quality_status}
                       </p>
-                    </article>
+                    </div>
                   ))}
                 </div>
               )}
@@ -446,7 +434,7 @@ export default function MatchesPage() {
           </p>
         </section>
 
-        {/* Existing Hybrid Match Finder */}
+        {/* Hybrid Match Finder */}
         <form
           onSubmit={findMatches}
           className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-7"
@@ -535,6 +523,7 @@ export default function MatchesPage() {
                     key={match.found_report_id}
                     className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-7"
                   >
+                    {/* Match header */}
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div>
                         <p className="text-xs tracking-widest text-slate-500">
@@ -558,6 +547,7 @@ export default function MatchesPage() {
                       </div>
                     </div>
 
+                    {/* Overall match progress */}
                     <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
                       <div
                         className="h-full rounded-full bg-violet-500"
@@ -570,6 +560,7 @@ export default function MatchesPage() {
                       />
                     </div>
 
+                    {/* Recommendation */}
                     <div className="mt-5 inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1.5 text-xs font-medium text-violet-300">
                       {recommendationLabel(match.recommendation)}
                     </div>
@@ -595,25 +586,42 @@ export default function MatchesPage() {
                       </div>
                     </div>
 
-                    {/* Similarity breakdown */}
+                    {/* Multimodal Similarity Breakdown */}
                     <div className="mt-8">
-                      <h4 className="mb-4 text-sm font-semibold">
-                        Similarity breakdown
-                      </h4>
+                      <div className="mb-4">
+                        <h4 className="text-sm font-semibold">
+                          Multimodal similarity breakdown
+                        </h4>
+
+                        <p className="mt-1 text-xs text-slate-500">
+                          Individual signal scores used by the hybrid
+                          matching engine.
+                        </p>
+                      </div>
 
                       <div className="grid gap-4 sm:grid-cols-2">
                         {scoreLabels.map(([label, key]) => {
-                          const value =
-                            (match.component_scores?.[key] ?? 0) * 100;
+                          const rawValue =
+                            match.component_scores?.[key];
+
+                          // Do not display unavailable signals as 0%.
+                          if (
+                            rawValue === null ||
+                            rawValue === undefined
+                          ) {
+                            return null;
+                          }
+
+                          const value = rawValue * 100;
 
                           return (
                             <div key={key}>
-                              <div className="mb-2 flex justify-between text-xs">
+                              <div className="mb-2 flex justify-between gap-3 text-xs">
                                 <span className="text-slate-400">
                                   {label}
                                 </span>
 
-                                <span className="text-slate-200">
+                                <span className="font-medium text-slate-200">
                                   {value.toFixed(1)}%
                                 </span>
                               </div>
@@ -633,8 +641,16 @@ export default function MatchesPage() {
                           );
                         })}
                       </div>
+
+                      <p className="mt-4 text-xs leading-5 text-slate-500">
+                        CLIP image similarity measures visual similarity
+                        between stored images. Semantic similarity measures
+                        description similarity. Attribute scores represent
+                        additional matching signals.
+                      </p>
                     </div>
 
+                    {/* Matching engine information */}
                     <div className="mt-6 border-t border-white/10 pt-4">
                       <p className="text-xs text-slate-500">
                         Matching engine: {match.matching_model}
@@ -682,7 +698,7 @@ export default function MatchesPage() {
           </section>
         )}
 
-        {/* Ownership verification disclaimer */}
+        {/* Important Notice */}
         <div className="mt-10 rounded-xl border border-amber-400/20 bg-amber-400/[0.05] p-4">
           <p className="text-xs leading-6 text-amber-200/80">
             Important: AI similarity scores identify potential candidates;

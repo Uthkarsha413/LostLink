@@ -193,10 +193,15 @@ export default function Home() {
             )}
 
             {user?.roles?.includes("ADMIN") && (
-              <Link href="/admin">Admin</Link>
+              <>
+                <Link href="/admin">Admin</Link>
+                <Link href="/admin/analytics">Analytics</Link>
+              </>
             )}
 
             <a href="#how">How it works</a>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
           </nav>
 
           <div className="ll-nav-actions">
@@ -292,9 +297,14 @@ export default function Home() {
             )}
 
             {user?.roles?.includes("ADMIN") && (
-              <Link href="/admin" onClick={() => setMenuOpen(false)}>
-                Admin Dashboard
-              </Link>
+              <>
+                <Link href="/admin" onClick={() => setMenuOpen(false)}>
+                  Admin Dashboard
+                </Link>
+                <Link href="/admin/analytics" onClick={() => setMenuOpen(false)}>
+                  Analytics Dashboard
+                </Link>
+              </>
             )}
 
             <a href="#how" onClick={() => setMenuOpen(false)}>
@@ -305,9 +315,9 @@ export default function Home() {
               Technology
             </a>
 
-            <a href="#about" onClick={() => setMenuOpen(false)}>
+            <Link href="/about" onClick={() => setMenuOpen(false)}>
               About
-            </a>
+            </Link>
 
             {authLoading ? null : user ? (
               <>
@@ -679,7 +689,7 @@ export default function Home() {
 
         <p>Intelligent discovery. Meaningful reunions.</p>
 
-        <span>© 2026 LostLink</span>
+        <div className="flex flex-wrap items-center gap-5 text-sm"><Link href="/about">About</Link><Link href="/contact">Contact Us</Link><span>© 2026 LostLink</span></div>
       </footer>
     </main>
   );

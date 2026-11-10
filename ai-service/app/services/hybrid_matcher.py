@@ -4,18 +4,21 @@ from datetime import datetime
 from app.services.similarity_engine import compare_item_descriptions
 
 
+# Total weight = 1.00
 WEIGHTS = {
-    "semantic": 0.45,
-    "category": 0.15,
-    "brand": 0.10,
-    "colour": 0.10,
-    "location": 0.10,
+    "semantic": 0.35,
+    "clip_image": 0.20,
+    "category": 0.12,
+    "brand": 0.08,
+    "colour": 0.08,
+    "location": 0.07,
     "time": 0.10,
 }
 
 
 def compare_text(value_a, value_b):
     """Compare two text values using case-insensitive exact matching."""
+
     if not value_a or not value_b:
         return None
 
@@ -28,6 +31,7 @@ def compare_text(value_a, value_b):
 
 def compare_time(date_a, date_b):
     """Calculate a time-proximity score between two item reports."""
+
     if not date_a or not date_b:
         return None
 
@@ -43,10 +47,13 @@ def compare_time(date_a, date_b):
 
     if difference_hours <= 24:
         return 1.0
+
     if difference_hours <= 72:
         return 0.75
+
     if difference_hours <= 168:
         return 0.50
+
     if difference_hours <= 720:
         return 0.25
 
@@ -55,29 +62,58 @@ def compare_time(date_a, date_b):
 
 def get_match_recommendation(score: float) -> str:
     """Convert the final similarity score into a recommendation level."""
+
     if score >= 0.85:
         return "STRONG_CANDIDATE"
+
     elif score >= 0.70:
         return "POSSIBLE_CANDIDATE"
+
     elif score >= 0.50:
         return "WEAK_CANDIDATE"
+
     else:
         return "LOW_SIMILARITY"
 
 
 def calculate_hybrid_match(
     lost_item: dict,
-    found_item: dict
+    found_item: dict,
+    clip_image_score: float | None = None,
 ) -> dict:
-    """Calculate a weighted similarity score between LOST and FOUND items."""
+    """
+    Calculate multimodal hybrid similarity between LOST and FOUND items.
+
+    Signals:
+    1. Semantic description similarity
+    2. CLIP image similarity
+    3. Category
+    4. Brand
+    5. Colour
+    6. Location
+    7. Time proximity
+
+    Missing signals are excluded and remaining weights are normalized.
+    """
 
     semantic_result = compare_item_descriptions(
         lost_item["description"],
         found_item["description"],
     )
 
+    # Validate optional CLIP image similarity.
+    if clip_image_score is not None:
+        clip_image_score = float(clip_image_score)
+
+        if not 0.0 <= clip_image_score <= 1.0:
+            raise ValueError(
+                "CLIP image similarity must be between 0 and 1."
+            )
+
     scores = {
         "semantic": semantic_result["similarity_score"],
+
+        "clip_image": clip_image_score,
 
         "category": compare_text(
             lost_item.get("category"),
@@ -126,17 +162,28 @@ def calculate_hybrid_match(
     final_score = weighted_score / available_weight
 
     return {
-        "matching_model": "LostLink Hybrid Matching v1",
+        "matching_model": "LostLink Multimodal Hybrid Matching v2",
+
         "final_score": round(final_score, 4),
-        "match_percentage": round(final_score * 100, 2),
-        "recommendation": get_match_recommendation(final_score),
+
+        "match_percentage": round(
+            final_score * 100, 2
+        ),
+
+        "recommendation": get_match_recommendation(
+            final_score
+        ),
+
         "component_scores": scores,
+
         "available_signals": sum(
             score is not None
             for score in scores.values()
         ),
+
         "note": (
-            "AI similarity is a recommendation, "
-            "not proof of ownership."
+            "AI similarity is a recommendation, not proof of ownership. "
+            "CLIP similarity is a retrieval score and is not a calibrated "
+            "probability of an item match."
         ),
     }

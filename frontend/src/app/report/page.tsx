@@ -32,6 +32,9 @@ export default function ReportPage() {
   const [reportType, setReportType] =
     useState<"LOST" | "FOUND">("LOST");
 
+  const [shareFinderContact, setShareFinderContact] =
+    useState(false);
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
@@ -211,6 +214,7 @@ export default function ReportPage() {
           brand: form.brand.trim() || null,
           color: form.color.trim() || null,
           eventDateTime: form.eventDateTime || null,
+          shareFinderContact: reportType === "FOUND" && shareFinderContact,
         }),
       });
 
@@ -267,6 +271,7 @@ export default function ReportPage() {
         color: "",
         eventDateTime: "",
       });
+        setShareFinderContact(false);
 
       imagePreviews.forEach((preview) =>
         URL.revokeObjectURL(preview)
@@ -505,6 +510,33 @@ export default function ReportPage() {
                   }
                 />
               </label>
+              
+              {reportType === "FOUND" && (
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "10px",
+                    marginTop: "16px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={shareFinderContact}
+                    onChange={(e) =>
+                      setShareFinderContact(e.target.checked)
+                    }
+                    style={{ marginTop: "4px", flexShrink: 0 }}
+                  />
+                  <span style={{ fontSize: "14px", lineHeight: 1.5 }}>
+                    I agree to share my contact details. My registered
+                    phone number and email address may be shared with
+                    the rightful claimant only after an administrator
+                    approves the claim. This is optional.
+                  </span>
+                </label>
+              )}
             </div>
 
             {/* Image upload */}

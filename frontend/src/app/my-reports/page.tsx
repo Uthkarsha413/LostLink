@@ -394,6 +394,30 @@ export default function MyReportsPage() {
                       </p>
                     </div>
                   )}
+
+                  {/* Actions & Tracking */}
+                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                    <span className="text-xs text-slate-400">
+                      ID: #{report.report_id}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      {report.report_status === "CLAIMED" && (
+                        <a
+                          href="/claims"
+                          className="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800 border border-amber-200 hover:bg-amber-100"
+                        >
+                          Handover in progress →
+                        </a>
+                      )}
+                      <a
+                        href={`/reports/${report.report_id}/timeline`}
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700 border border-blue-200 hover:bg-blue-100 transition-colors"
+                      >
+                        <span>🧭</span> Track Timeline (9 Stages)
+                      </a>
+                    </div>
+                  </div>
                 </article>
               );
             })}

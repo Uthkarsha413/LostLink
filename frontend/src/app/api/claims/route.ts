@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { getSession } from "@/lib/session";
+import { recordClaimTimelineEvents } from "@/lib/timeline";
 import type { RowDataPacket } from "mysql2";
 
 interface ClaimProcedureRow {
@@ -151,7 +152,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 8. Return successful claim submission.
+    // 8. Record stage 4 timeline events for both reports.
+    try {
+      await recordClaimTimelineEvents(
+        lostReportId,
+        foundReportId,
+        {
+          claimId,
+          actorUserId: Number(session.userId),
+          actorRole: "STUDENT",
+          stageNumber: 4,
+          eventType: "CLAIM_SUBMITTED",
+          eventTitle: "Ownership Claim Submitted",
+          eventDescription: `${report.claimant_name} submitted an ownership claim for "${report.lost_title}".`,
+          itemStatus: "CLAIMED",
+        },
+        connection
+      );
+    } catch (timelineErr) {
+      console.error("Timeline recording error (non-fatal):", timelineErr);
+    }
+
+    // 9. Return successful claim submission.
     return NextResponse.json(
       {
         success: true,
@@ -215,7 +237,7 @@ export async function GET() {
         roles.includes("ADMIN") ||
         roles.includes("MODERATOR");
 
-      // Retrieve review queue or the student's own claims.
+      // Retrieve review queue or the user's claims (both as claimant and as finder).
       const [claims] = await connection.execute<RowDataPacket[]>(
         `SELECT
            c.claim_id,
@@ -224,11 +246,35 @@ export async function GET() {
            c.updated_at,
            c.claimant_id,
            claimant.full_name AS claimant_name,
+           found.user_id AS finder_id,
+           finder.full_name AS finder_name,
            c.lost_report_id,
            lost.title AS lost_item_title,
            c.found_report_id,
            found.title AS found_item_title,
-           c.match_id
+           c.match_id,
+           ch.otp_verified_at,
+           ch.finder_confirmed_at,
+           ch.claimant_confirmed_at,
+           ch.otp_expires_at,
+           CASE
+             WHEN ch.otp_expires_at IS NOT NULL AND ch.otp_expires_at > NOW() AND ch.otp_verified_at IS NULL THEN 1
+             ELSE 0
+           END AS otp_is_active,
+           CASE
+             WHEN ch.otp_verified_at IS NOT NULL THEN 1
+             ELSE 0
+           END AS otp_verified,
+           CASE
+             WHEN ch.finder_confirmed_at IS NOT NULL THEN 1
+             ELSE 0
+           END AS finder_confirmed,
+           CASE
+             WHEN ch.claimant_confirmed_at IS NOT NULL THEN 1
+             ELSE 0
+           END AS claimant_confirmed,
+           CASE WHEN c.claimant_id = ? THEN 1 ELSE 0 END AS is_claimant,
+           CASE WHEN found.user_id = ? THEN 1 ELSE 0 END AS is_finder
          FROM claims c
          JOIN users claimant
            ON claimant.user_id = c.claimant_id
@@ -236,18 +282,25 @@ export async function GET() {
            ON lost.report_id = c.lost_report_id
          JOIN item_reports found
            ON found.report_id = c.found_report_id
+         JOIN users finder
+           ON finder.user_id = found.user_id
+         LEFT JOIN claim_handovers ch
+           ON ch.claim_id = c.claim_id
          ${
            canReview
              ? `WHERE c.claim_status IN (
                   'SUBMITTED',
                   'MODERATOR_REVIEW',
                   'ADMIN_REVIEW',
-                  'APPROVED'
+                  'APPROVED',
+                  'HANDED_OVER'
                 )`
-             : `WHERE c.claimant_id = ?`
+             : `WHERE c.claimant_id = ? OR found.user_id = ?`
          }
          ORDER BY c.submitted_at DESC`,
-        canReview ? [] : [session.userId]
+        canReview
+          ? [session.userId, session.userId]
+          : [session.userId, session.userId, session.userId, session.userId]
       );
 
       return NextResponse.json({

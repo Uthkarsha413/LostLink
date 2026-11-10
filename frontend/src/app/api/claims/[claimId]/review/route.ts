@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { getSession } from "@/lib/session";
+import { recordClaimTimelineEvents } from "@/lib/timeline";
 import type { RowDataPacket } from "mysql2";
 
 type ReviewerRow = RowDataPacket & {
@@ -11,6 +12,9 @@ type ReviewerRow = RowDataPacket & {
 type ClaimRow = RowDataPacket & {
   claim_id: number;
   claim_status: string;
+  lost_report_id: number;
+  found_report_id: number;
+  claimant_id: number;
 };
 
 export async function POST(
@@ -100,7 +104,7 @@ const comments =
 
     // 2. Lock the claim while reviewing it.
     const [claimRows] = await connection.execute<ClaimRow[]>(
-      `SELECT claim_id, claim_status
+      `SELECT claim_id, claim_status, lost_report_id, found_report_id, claimant_id
        FROM claims
        WHERE claim_id = ?
        FOR UPDATE`,
@@ -207,7 +211,44 @@ const comments =
       [newStatus, claimId]
     );
 
-    // 7. Record audit history.
+    // If approved, ensure claim_handovers entry is ready.
+    if (newStatus === "APPROVED") {
+      await connection.execute(
+        `INSERT INTO claim_handovers (claim_id)
+         VALUES (?)
+         ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP`,
+        [claimId]
+      );
+    }
+
+    // 7. Record timeline stage 5 for both reports.
+    try {
+      await recordClaimTimelineEvents(
+        claim.lost_report_id,
+        claim.found_report_id,
+        {
+          claimId,
+          actorUserId: Number(session.userId),
+          actorRole: reviewerRole,
+          stageNumber: 5,
+          eventType: "CLAIM_REVIEWED",
+          eventTitle:
+            newStatus === "APPROVED"
+              ? "Claim Approved by Administrator"
+              : "Claim Rejected by Administrator",
+          eventDescription:
+            newStatus === "APPROVED"
+              ? "Ownership claim has been approved. Secure OTP handover verification is now unlocked."
+              : `Ownership claim was rejected.${comments ? ` Reason: ${comments}` : ""}`,
+          itemStatus: newStatus === "APPROVED" ? "CLAIMED" : "ACTIVE",
+        },
+        connection
+      );
+    } catch (timelineErr) {
+      console.error("Timeline recording error (non-fatal):", timelineErr);
+    }
+
+    // 8. Record audit history.
     await connection.execute(
       `INSERT INTO admin_audit_logs (
         actor_id,

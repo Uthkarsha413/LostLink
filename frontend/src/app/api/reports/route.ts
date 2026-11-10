@@ -174,6 +174,9 @@ export async function POST(request: NextRequest) {
       ? body.reportType.trim().toUpperCase()
       : "";
 
+  const shareFinderContact =
+    reportType === "FOUND" && body.shareFinderContact === true;
+
   const title =
     typeof body.title === "string" ? body.title.trim() : "";
 
@@ -349,9 +352,14 @@ export async function POST(request: NextRequest) {
         brand,
         color,
         event_datetime,
-        report_status
+        report_status,
+        finder_contact_consent,
+        finder_contact_consent_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE')`,
+      VALUES (
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', ?,
+        IF(?, CURRENT_TIMESTAMP, NULL)
+      )`,
       [
         session.userId,
         categoryId,
@@ -362,6 +370,8 @@ export async function POST(request: NextRequest) {
         brand || null,
         color || null,
         formattedDateTime,
+        shareFinderContact ? 1 : 0,
+        shareFinderContact ? 1 : 0,
       ]
     );
 

@@ -2,6 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 
 type Claim = {
   claim_id: number;
@@ -167,18 +168,35 @@ export default function AdminDashboard() {
 
         {/* HEADER */}
         <header className="mb-8 border-b border-slate-800 pb-6">
-          <p className="mb-2 text-sm font-semibold tracking-[0.25em] text-cyan-400">
-            LOSTLINK • ADMINISTRATION
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="mb-2 text-sm font-semibold tracking-[0.25em] text-cyan-400">
+                LOSTLINK • ADMINISTRATION
+              </p>
 
-          <h1 className="text-3xl font-bold sm:text-4xl">
-            Admin Dashboard
-          </h1>
+              <h1 className="text-3xl font-bold sm:text-4xl">
+                Admin Dashboard
+              </h1>
 
-          <p className="mt-3 max-w-2xl text-slate-400">
-            Review escalated ownership claims, make final decisions,
-            and complete item handovers.
-          </p>
+              <p className="mt-2 max-w-2xl text-slate-400 text-sm">
+                Review escalated ownership claims, make final decisions,
+                and monitor item handovers.
+              </p>
+            </div>
+
+            {/* Navigation Switcher Tabs */}
+            <div className="flex items-center gap-2 rounded-xl bg-slate-900 p-1.5 border border-slate-800">
+              <span className="rounded-lg bg-cyan-600 px-4 py-2 text-xs font-bold text-white shadow-md">
+                Claims Review
+              </span>
+              <Link
+                href="/admin/analytics"
+                className="rounded-lg px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+              >
+                Analytics & Reports →
+              </Link>
+            </div>
+          </div>
         </header>
 
         {/* MESSAGES */}

@@ -1,19 +1,28 @@
-
 import { NextRequest, NextResponse } from "next/server";
-
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
-
 import { getSession } from "@/lib/session";
-
 import pool from "@/lib/db";
+import { recordClaimTimelineEvents } from "@/lib/timeline";
 
 interface ClaimRow extends RowDataPacket {
   claim_id: number;
   claim_status: string;
+  claimant_id: number;
+  claimant_name: string;
   lost_report_id: number;
   found_report_id: number;
+  lost_item_title: string;
+  found_item_title: string;
+  finder_id: number;
+  finder_name: string;
   lost_status: string;
   found_status: string;
+  otp_hash: string | null;
+  otp_attempts: number;
+  otp_expires_at: Date | null;
+  otp_verified_at: Date | null;
+  finder_confirmed_at: Date | null;
+  claimant_confirmed_at: Date | null;
 }
 
 interface UserRow extends RowDataPacket {
@@ -21,8 +30,155 @@ interface UserRow extends RowDataPacket {
   roles: string | null;
 }
 
+/**
+ * GET: Retrieve secure handover state and participant status for a claim.
+ */
+export async function GET(
+  _request: NextRequest,
+  context: { params: Promise<{ claimId: string }> }
+) {
+  const session = await getSession();
+
+  if (!session) {
+    return NextResponse.json(
+      { success: false, message: "Authentication required" },
+      { status: 401 }
+    );
+  }
+
+  const { claimId: rawClaimId } = await context.params;
+  const claimId = Number(rawClaimId);
+
+  if (!Number.isSafeInteger(claimId) || claimId <= 0) {
+    return NextResponse.json(
+      { success: false, message: "Invalid claim ID" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const [rows] = await pool.execute<ClaimRow[]>(
+      `SELECT
+         c.claim_id,
+         c.claim_status,
+         c.claimant_id,
+         claimant.full_name AS claimant_name,
+         found.user_id AS finder_id,
+         finder.full_name AS finder_name,
+         c.lost_report_id,
+         lost.title AS lost_item_title,
+         lost.report_status AS lost_status,
+         c.found_report_id,
+         found.title AS found_item_title,
+         found.report_status AS found_status,
+         ch.otp_hash,
+         COALESCE(ch.otp_attempts, 0) AS otp_attempts,
+         ch.otp_expires_at,
+         ch.otp_verified_at,
+         ch.finder_confirmed_at,
+         ch.claimant_confirmed_at
+       FROM claims c
+       JOIN users claimant ON claimant.user_id = c.claimant_id
+       JOIN item_reports lost ON lost.report_id = c.lost_report_id
+       JOIN item_reports found ON found.report_id = c.found_report_id
+       JOIN users finder ON finder.user_id = found.user_id
+       LEFT JOIN claim_handovers ch ON ch.claim_id = c.claim_id
+       WHERE c.claim_id = ?`,
+      [claimId]
+    );
+
+    const claim = rows[0];
+
+    if (!claim) {
+      return NextResponse.json(
+        { success: false, message: "Claim not found" },
+        { status: 404 }
+      );
+    }
+
+    // Role verification
+    const currentUserId = Number(session.userId);
+    const isClaimant = currentUserId === claim.claimant_id;
+    const isFinder = currentUserId === claim.finder_id;
+
+    const [adminRows] = await pool.execute<RowDataPacket[]>(
+      `SELECT 1 FROM user_roles ur
+       JOIN roles r ON r.role_id = ur.role_id
+       WHERE ur.user_id = ? AND r.role_name IN ('ADMIN', 'MODERATOR')`,
+      [currentUserId]
+    );
+    const isAdminOrMod = adminRows.length > 0;
+
+    if (!isClaimant && !isFinder && !isAdminOrMod) {
+      return NextResponse.json(
+        { success: false, message: "Access denied to this claim handover" },
+        { status: 403 }
+      );
+    }
+
+    const now = new Date();
+    const otpExpires = claim.otp_expires_at ? new Date(claim.otp_expires_at) : null;
+    const otpActive =
+      Boolean(claim.otp_hash) &&
+      Boolean(otpExpires && now < otpExpires) &&
+      !claim.otp_verified_at;
+
+    const attemptsRemaining = Math.max(0, 5 - claim.otp_attempts);
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        claimId: claim.claim_id,
+        claimStatus: claim.claim_status,
+        lostReportId: claim.lost_report_id,
+        foundReportId: claim.found_report_id,
+        lostItemTitle: claim.lost_item_title,
+        foundItemTitle: claim.found_item_title,
+        claimantId: claim.claimant_id,
+        claimantName: claim.claimant_name,
+        finderId: claim.finder_id,
+        finderName: claim.finder_name,
+        userRole: {
+          isClaimant,
+          isFinder,
+          isAdmin: isAdminOrMod,
+        },
+        otpState: {
+          generated: Boolean(claim.otp_hash),
+          active: otpActive,
+          expiresAt: claim.otp_expires_at ? claim.otp_expires_at.toISOString() : null,
+          attemptsRemaining,
+          verified: Boolean(claim.otp_verified_at),
+          verifiedAt: claim.otp_verified_at ? claim.otp_verified_at.toISOString() : null,
+        },
+        confirmationState: {
+          finderConfirmed: Boolean(claim.finder_confirmed_at),
+          finderConfirmedAt: claim.finder_confirmed_at
+            ? claim.finder_confirmed_at.toISOString()
+            : null,
+          claimantConfirmed: Boolean(claim.claimant_confirmed_at),
+          claimantConfirmedAt: claim.claimant_confirmed_at
+            ? claim.claimant_confirmed_at.toISOString()
+            : null,
+          bothConfirmed: Boolean(claim.finder_confirmed_at && claim.claimant_confirmed_at),
+          isCompleted: claim.claim_status === "HANDED_OVER",
+        },
+      },
+    });
+  } catch (error) {
+    console.error("GET Handover error:", error);
+    return NextResponse.json(
+      { success: false, message: "Unable to retrieve handover status" },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST: Administrator override / direct handover completion with transaction.
+ */
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   context: { params: Promise<{ claimId: string }> }
 ) {
   const session = await getSession();
@@ -44,19 +200,15 @@ export async function POST(
     );
   }
 
-  let connection: Awaited<ReturnType<typeof pool.getConnection>> | null =
-    null;
-
+  let connection: Awaited<ReturnType<typeof pool.getConnection>> | null = null;
   let transactionStarted = false;
 
   try {
     connection = await pool.getConnection();
-
     await connection.beginTransaction();
     transactionStarted = true;
 
-    // 1. Verify that the current user is an active administrator.
-
+    // 1. Verify admin role
     const [users] = await connection.query<UserRow[]>(
       `SELECT
          u.account_status,
@@ -79,15 +231,13 @@ export async function POST(
     ) {
       await connection.rollback();
       transactionStarted = false;
-
       return NextResponse.json(
         { success: false, message: "Administrator access required" },
         { status: 403 }
       );
     }
 
-    // 2. Lock the claim and its two associated reports.
-
+    // 2. Lock claim and reports
     const [claims] = await connection.query<ClaimRow[]>(
       `SELECT
          c.claim_id,
@@ -97,10 +247,8 @@ export async function POST(
          l.report_status AS lost_status,
          f.report_status AS found_status
        FROM claims c
-       INNER JOIN item_reports l
-         ON l.report_id = c.lost_report_id
-       INNER JOIN item_reports f
-         ON f.report_id = c.found_report_id
+       INNER JOIN item_reports l ON l.report_id = c.lost_report_id
+       INNER JOIN item_reports f ON f.report_id = c.found_report_id
        WHERE c.claim_id = ?
        FOR UPDATE`,
       [claimId]
@@ -111,19 +259,15 @@ export async function POST(
     if (!claim) {
       await connection.rollback();
       transactionStarted = false;
-
       return NextResponse.json(
         { success: false, message: "Claim not found" },
         { status: 404 }
       );
     }
 
-    // 3. Only approved claims can be handed over.
-
     if (claim.claim_status !== "APPROVED") {
       await connection.rollback();
       transactionStarted = false;
-
       return NextResponse.json(
         {
           success: false,
@@ -133,30 +277,8 @@ export async function POST(
       );
     }
 
-    // 4. Ensure both reports can be closed.
-
-    const allowedReportStatuses = ["ACTIVE", "MATCHED", "CLAIMED"];
-
-    if (
-      !allowedReportStatuses.includes(claim.lost_status) ||
-      !allowedReportStatuses.includes(claim.found_status)
-    ) {
-      await connection.rollback();
-      transactionStarted = false;
-
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            "One or both reports cannot be closed in their current status",
-        },
-        { status: 409 }
-      );
-    }
-
-    // 5. Mark the claim as handed over.
-
-    const [claimUpdate] = await connection.execute<ResultSetHeader>(
+    // 3. Mark claim as HANDED_OVER
+    await connection.execute<ResultSetHeader>(
       `UPDATE claims
        SET claim_status = 'HANDED_OVER',
            updated_at = CURRENT_TIMESTAMP
@@ -165,37 +287,41 @@ export async function POST(
       [claimId]
     );
 
-    if (claimUpdate.affectedRows !== 1) {
-      throw new Error("Claim status could not be updated");
-    }
+    // 4. Update handover record
+    await connection.execute(
+      `INSERT INTO claim_handovers (
+         claim_id,
+         finder_confirmed_at,
+         claimant_confirmed_at,
+         otp_verified_at,
+         updated_at
+       )
+       VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+       ON DUPLICATE KEY UPDATE
+         finder_confirmed_at = COALESCE(finder_confirmed_at, CURRENT_TIMESTAMP),
+         claimant_confirmed_at = COALESCE(claimant_confirmed_at, CURRENT_TIMESTAMP),
+         otp_verified_at = COALESCE(otp_verified_at, CURRENT_TIMESTAMP),
+         updated_at = CURRENT_TIMESTAMP`,
+      [claimId]
+    );
 
-    // 6. Explicitly set the trigger context on this connection.
-
+    // 5. Trigger context
     await connection.query(
-      `SET
-         @lostlink_actor_id = ?,
-         @lostlink_change_source = 'ADMIN'`,
+      `SET @lostlink_actor_id = ?, @lostlink_change_source = 'ADMIN'`,
       [session.userId]
     );
 
-    // 7. Close both related reports.
-
-    const [reportUpdate] = await connection.execute<ResultSetHeader>(
+    // 6. Close reports
+    await connection.execute<ResultSetHeader>(
       `UPDATE item_reports
-       SET report_status = 'CLOSED'
+       SET report_status = 'CLOSED',
+           updated_at = CURRENT_TIMESTAMP
        WHERE report_id IN (?, ?)
          AND report_status IN ('ACTIVE', 'MATCHED', 'CLAIMED')`,
       [claim.lost_report_id, claim.found_report_id]
     );
 
-    if (reportUpdate.affectedRows !== 2) {
-      throw new Error(
-        `Expected to close 2 reports, but updated ${reportUpdate.affectedRows}`
-      );
-    }
-
-    // 8. Record the handover in the administrator audit log.
-
+    // 7. Audit log
     await connection.execute(
       `INSERT INTO admin_audit_logs (
          actor_id,
@@ -209,90 +335,30 @@ export async function POST(
       [
         session.userId,
         claimId,
-        JSON.stringify({
-          claim_status: "APPROVED",
-          lost_report_status: claim.lost_status,
-          found_report_status: claim.found_status,
-        }),
-        JSON.stringify({
-          claim_status: "HANDED_OVER",
-          lost_report_status: "CLOSED",
-          found_report_status: "CLOSED",
-        }),
+        JSON.stringify({ claim_status: "APPROVED" }),
+        JSON.stringify({ claim_status: "HANDED_OVER", report_status: "CLOSED" }),
       ]
     );
 
-    // 9. Commit all MySQL changes together.
+    // 8. Timeline events
+    await recordClaimTimelineEvents(
+      claim.lost_report_id,
+      claim.found_report_id,
+      {
+        claimId,
+        actorUserId: Number(session.userId),
+        actorRole: "ADMIN",
+        stageNumber: 9,
+        eventType: "ITEM_RECOVERED",
+        eventTitle: "Item Handover Completed by Administrator",
+        eventDescription: "Administrator verified physical handover and marked item as recovered.",
+        itemStatus: "CLOSED",
+      },
+      connection
+    );
 
     await connection.commit();
     transactionStarted = false;
-
-    // 10. Clean up Qdrant vectors AFTER successful MySQL commit.
-    // Cleanup failures must never undo a successful handover.
-
-    const aiServiceUrl = process.env.AI_SERVICE_URL;
-    const internalToken = process.env.LOSTLINK_INTERNAL_TOKEN;
-
-    if (aiServiceUrl && internalToken) {
-      const reportIds = [
-        claim.lost_report_id,
-        claim.found_report_id,
-      ];
-
-      try {
-        const cleanupResults = await Promise.allSettled(
-          reportIds.map(async (reportId) => {
-            const response = await fetch(
-              `${aiServiceUrl}/reports/cleanup`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${internalToken}`,
-                },
-                body: JSON.stringify({
-                  report_id: reportId,
-                }),
-                cache: "no-store",
-                signal: AbortSignal.timeout(15000),
-              }
-            );
-
-            if (!response.ok) {
-              throw new Error(
-                `Cleanup failed for report ${reportId}: HTTP ${response.status}`
-              );
-            }
-
-            return reportId;
-          })
-        );
-
-        cleanupResults.forEach((result, index) => {
-          if (result.status === "rejected") {
-            console.error(
-              `Qdrant cleanup failed for report ${reportIds[index]}:`,
-              result.reason
-            );
-          } else {
-            console.log(
-              `Qdrant cleanup successful for report ${result.value}`
-            );
-          }
-        });
-      } catch (cleanupError) {
-        console.error(
-          "Unexpected Qdrant cleanup error:",
-          cleanupError
-        );
-      }
-    } else {
-      console.error(
-        "Qdrant cleanup skipped: AI_SERVICE_URL or LOSTLINK_INTERNAL_TOKEN is missing."
-      );
-    }
-
-    // 11. Return successful handover response.
 
     return NextResponse.json({
       success: true,
@@ -309,32 +375,20 @@ export async function POST(
     if (connection && transactionStarted) {
       try {
         await connection.rollback();
-      } catch (rollbackError) {
-        console.error("Handover rollback error:", rollbackError);
+      } catch (e) {
+        console.error("Rollback error:", e);
       }
     }
-
     console.error("Handover error:", error);
-
     return NextResponse.json(
-      {
-        success: false,
-        message: "Unable to confirm handover",
-      },
+      { success: false, message: "Unable to confirm handover" },
       { status: 500 }
     );
   } finally {
     if (connection) {
-      // Clear trigger context before returning the connection to the pool.
-
       try {
-        await connection.query(
-          "SET @lostlink_actor_id = NULL, @lostlink_change_source = NULL"
-        );
-      } catch (resetError) {
-        console.error("Trigger context reset error:", resetError);
-      }
-
+        await connection.query("SET @lostlink_actor_id = NULL, @lostlink_change_source = NULL");
+      } catch {}
       connection.release();
     }
   }

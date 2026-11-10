@@ -381,9 +381,8 @@ export async function GET(
        INNER JOIN item_reports ir
          ON ir.report_id = ri.report_id
        WHERE ri.report_id = ?
-         AND ri.image_id = ?
-         AND ir.report_status = 'ACTIVE'
-         AND (
+        AND ri.image_id = ?
+        AND (
            ir.user_id = ?
            OR EXISTS (
              SELECT 1

@@ -79,8 +79,10 @@ def get_report_by_id(report_id: int) -> dict | None:
         connection.close()
 
 
-def get_active_reports_with_images(report_type: str | None = None) -> list[dict]:
-    """Fetch active reports and their primary image records."""
+def get_active_reports_with_images(
+    report_type: str | None = None
+) -> list[dict]:
+    """Fetch active reports with accepted primary images only."""
 
     if report_type not in (None, "LOST", "FOUND"):
         raise ValueError("Report type must be LOST or FOUND.")
@@ -111,6 +113,7 @@ def get_active_reports_with_images(report_type: str | None = None) -> list[dict]
             ON ir.report_id = ri.report_id
         WHERE ir.report_status = 'ACTIVE'
           AND ri.is_primary = 1
+          AND ri.image_quality_status = 'ACCEPTED'
     """
 
     parameters = []
@@ -129,8 +132,10 @@ def get_active_reports_with_images(report_type: str | None = None) -> list[dict]
             return cursor.fetchall()
     finally:
         connection.close()
+
+
 def get_active_report_with_image(report_id: int) -> dict | None:
-    """Fetch one active report and its primary image."""
+    """Fetch one active report with its accepted primary image."""
 
     query = """
         SELECT
@@ -159,6 +164,7 @@ def get_active_report_with_image(report_id: int) -> dict | None:
         WHERE ir.report_id = %s
           AND ir.report_status = 'ACTIVE'
           AND ri.is_primary = 1
+          AND ri.image_quality_status = 'ACCEPTED'
         LIMIT 1
     """
 
@@ -173,7 +179,7 @@ def get_active_report_with_image(report_id: int) -> dict | None:
 
 
 def get_active_report_images(report_id: int) -> list[dict]:
-    """Fetch all images belonging to one active report."""
+    """Fetch accepted images belonging to one active report."""
 
     query = """
         SELECT
@@ -200,6 +206,7 @@ def get_active_report_images(report_id: int) -> list[dict]:
             ON ir.report_id = ri.report_id
         WHERE ir.report_id = %s
           AND ir.report_status = 'ACTIVE'
+          AND ri.image_quality_status = 'ACCEPTED'
         ORDER BY ri.is_primary DESC, ri.image_id ASC
     """
 

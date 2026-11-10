@@ -1,5 +1,6 @@
 
-import { NextResponse, connection } from "next/server";
+import { NextResponse } from "next/server";
+import { unstable_rethrow } from "next/navigation";
 import pool from "@/lib/db";
 import { getSession } from "@/lib/session";
 import type { RowDataPacket } from "mysql2";
@@ -17,7 +18,6 @@ interface PendingImageRow extends RowDataPacket {
   image_quality_status: "PENDING" | "ACCEPTED" | "REJECTED";
   is_primary: number;
   uploaded_at: Date;
-
   report_type: "LOST" | "FOUND";
   title: string;
   description: string;
@@ -25,16 +25,25 @@ interface PendingImageRow extends RowDataPacket {
   color: string | null;
   report_status: string;
   report_created_at: Date;
-
   category_name: string;
   location_name: string | null;
   reporter_name: string;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Ensure this handler runs in the context of an incoming request.
-    await connection();
+    // Access incoming request data.
+    const cookieHeader = request.headers.get("cookie");
+
+    if (!cookieHeader) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Authentication required",
+        },
+        { status: 401 }
+      );
+    }
 
     // Verify the signed-in user.
     const session = await getSession();
@@ -49,7 +58,7 @@ export async function GET() {
       );
     }
 
-    // Check whether the user has an active MODERATOR or ADMIN role.
+    // Check moderator or admin permissions.
     const [roleRows] = await pool.execute<RoleRow[]>(
       `SELECT r.role_name
        FROM users u
@@ -79,7 +88,7 @@ export async function GET() {
       );
     }
 
-    // Retrieve all images awaiting quality review.
+    // Retrieve images awaiting quality review.
     const [images] = await pool.execute<PendingImageRow[]>(
       `SELECT
          ri.image_id,
@@ -90,7 +99,6 @@ export async function GET() {
          ri.image_quality_status,
          ri.is_primary,
          ri.uploaded_at,
-
          ir.report_type,
          ir.title,
          ir.description,
@@ -98,48 +106,35 @@ export async function GET() {
          ir.color,
          ir.report_status,
          ir.created_at AS report_created_at,
-
          c.category_name,
-
          cl.location_name,
-
          COALESCE(
            NULLIF(TRIM(u.full_name), ''),
            CONCAT('User #', u.user_id)
          ) AS reporter_name
-
        FROM report_images ri
-
        INNER JOIN item_reports ir
          ON ir.report_id = ri.report_id
-
        INNER JOIN users u
          ON u.user_id = ir.user_id
-
        INNER JOIN categories c
          ON c.category_id = ir.category_id
-
        LEFT JOIN campus_locations cl
          ON cl.location_id = ir.location_id
-
        WHERE ri.image_quality_status = 'PENDING'
-
        ORDER BY ri.uploaded_at ASC, ri.image_id ASC`
     );
 
-    // Format the response for the moderator dashboard.
+    // Format the moderator dashboard response.
     const data = images.map((image) => ({
       imageId: image.image_id,
       reportId: image.report_id,
-
       imageUrl: `/api/reports/${image.report_id}/images?imageId=${image.image_id}`,
-
       originalFilename: image.original_filename,
       mimeType: image.mime_type,
       imageQualityStatus: image.image_quality_status,
       isPrimary: Boolean(image.is_primary),
       uploadedAt: image.uploaded_at,
-
       report: {
         reportType: image.report_type,
         title: image.title,
@@ -160,6 +155,9 @@ export async function GET() {
       data,
     });
   } catch (error) {
+    // Allow Next.js internal errors to propagate.
+    unstable_rethrow(error);
+
     console.error("Pending image moderation error:", error);
 
     return NextResponse.json(

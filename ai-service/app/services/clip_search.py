@@ -1,7 +1,13 @@
 
 from app.services.clip_embedder import encode_image
+
 from app.services.qdrant_client import client, CLIP_COLLECTION
-from qdrant_client.models import FieldCondition, Filter, MatchValue
+
+from qdrant_client.models import (
+    FieldCondition,
+    Filter,
+    MatchValue,
+)
 
 
 def search_similar_report_images(
@@ -10,16 +16,25 @@ def search_similar_report_images(
     limit: int = 5,
     exclude_report_id: int | None = None,
 ) -> list[dict]:
-    """Find visually similar report images using CLIP and Qdrant."""
+    """
+    Find visually similar accepted report images using CLIP
+    embeddings stored in Qdrant.
+    """
 
     if target_report_type not in ("LOST", "FOUND"):
-        raise ValueError("Target report type must be LOST or FOUND.")
+        raise ValueError(
+            "Target report type must be LOST or FOUND."
+        )
 
     if limit < 1 or limit > 50:
-        raise ValueError("Limit must be between 1 and 50.")
+        raise ValueError(
+            "Limit must be between 1 and 50."
+        )
 
+    # 1. Generate CLIP embedding for the input image.
     query_vector = encode_image(image_path)
 
+    # 2. Search only active reports with accepted images.
     search_filter = Filter(
         must=[
             FieldCondition(
@@ -34,12 +49,18 @@ def search_similar_report_images(
                 key="report_status",
                 match=MatchValue(value="ACTIVE"),
             ),
+            FieldCondition(
+                key="image_quality_status",
+                match=MatchValue(value="ACCEPTED"),
+            ),
         ],
         must_not=(
             [
                 FieldCondition(
                     key="report_id",
-                    match=MatchValue(value=exclude_report_id),
+                    match=MatchValue(
+                        value=exclude_report_id
+                    ),
                 )
             ]
             if exclude_report_id is not None
@@ -47,6 +68,7 @@ def search_similar_report_images(
         ),
     )
 
+    # 3. Query the CLIP vector collection.
     results = client.query_points(
         collection_name=CLIP_COLLECTION,
         query=query_vector,
@@ -56,23 +78,32 @@ def search_similar_report_images(
         with_vectors=False,
     ).points
 
+    # 4. Format matching results.
     candidates = []
 
     for result in results:
         payload = result.payload or {}
 
-        candidates.append({
-            "report_id": payload.get("report_id"),
-            "image_id": payload.get("image_id"),
-            "report_type": payload.get("report_type"),
-            "title": payload.get("title"),
-            "category": payload.get("category"),
-            "brand": payload.get("brand"),
-            "color": payload.get("color"),
-            "location": payload.get("location"),
-            "image_quality_status": payload.get("image_quality_status"),
-            "similarity_score": round(float(result.score), 4),
-            "similarity_percentage": round(float(result.score) * 100, 2),
-        })
+        candidates.append(
+            {
+                "report_id": payload.get("report_id"),
+                "image_id": payload.get("image_id"),
+                "report_type": payload.get("report_type"),
+                "title": payload.get("title"),
+                "category": payload.get("category"),
+                "brand": payload.get("brand"),
+                "color": payload.get("color"),
+                "location": payload.get("location"),
+                "image_quality_status": payload.get(
+                    "image_quality_status"
+                ),
+                "similarity_score": round(
+                    float(result.score), 4
+                ),
+                "similarity_percentage": round(
+                    float(result.score) * 100, 2
+                ),
+            }
+        )
 
     return candidates
