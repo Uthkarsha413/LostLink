@@ -124,65 +124,64 @@ export default function MyReportsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-5 py-10">
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 px-5 py-10 text-slate-900 dark:text-slate-100 transition-colors">
       <div className="mx-auto max-w-5xl">
 
         {/* Page heading */}
         <header className="mb-8">
-          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-            LostLink
+          <p className="text-sm font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+            LostLink Reports
           </p>
 
-          <h1 className="mt-2 text-3xl font-bold text-slate-900">
-            My Reports
+          <h1 className="mt-2 text-3xl font-extrabold text-slate-900 dark:text-white">
+            My Reported Items
           </h1>
 
-          <p className="mt-2 text-slate-600">
-            View and track all the lost and found items you have
-            reported on campus.
+          <p className="mt-2 text-slate-600 dark:text-slate-400">
+            View and track all the lost and found items you have reported on campus.
           </p>
         </header>
 
         {/* Summary cards */}
         <section className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Total reports</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-5 shadow-sm backdrop-blur">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total reports</p>
+            <p className="mt-2 text-3xl font-black text-slate-900 dark:text-white">
               {total}
             </p>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Lost</p>
-            <p className="mt-2 text-3xl font-bold text-rose-600">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-5 shadow-sm backdrop-blur">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Lost items</p>
+            <p className="mt-2 text-3xl font-black text-rose-600 dark:text-rose-400">
               {summary.lost}
             </p>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Found</p>
-            <p className="mt-2 text-3xl font-bold text-green-600">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-5 shadow-sm backdrop-blur">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Found items</p>
+            <p className="mt-2 text-3xl font-black text-emerald-600 dark:text-emerald-400">
               {summary.found}
             </p>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Active on this page</p>
-            <p className="mt-2 text-3xl font-bold text-blue-600">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-5 shadow-sm backdrop-blur">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active reports</p>
+            <p className="mt-2 text-3xl font-black text-cyan-600 dark:text-cyan-400">
               {summary.active}
             </p>
           </div>
         </section>
 
         {/* Filters */}
-        <section className="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="mb-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-5 shadow-sm backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="font-semibold text-slate-900">
+              <h2 className="font-bold text-slate-900 dark:text-white">
                 Your submitted reports
               </h2>
 
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 {total} report(s) found
               </p>
             </div>
@@ -190,9 +189,9 @@ export default function MyReportsPage() {
             <button
               onClick={loadReports}
               disabled={loading}
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50"
+              className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 disabled:opacity-50 transition-colors"
             >
-              Refresh
+              ↻ Refresh
             </button>
           </div>
 
@@ -200,7 +199,7 @@ export default function MyReportsPage() {
             <div>
               <label
                 htmlFor="report-type"
-                className="mb-2 block text-sm font-medium text-slate-700"
+                className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400"
               >
                 Report type
               </label>
@@ -209,7 +208,7 @@ export default function MyReportsPage() {
                 id="report-type"
                 value={type}
                 onChange={(event) => changeType(event.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white p-3 text-sm outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-3 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-cyan-500"
               >
                 <option value="ALL">All reports</option>
                 <option value="LOST">Lost items</option>
@@ -220,7 +219,7 @@ export default function MyReportsPage() {
             <div>
               <label
                 htmlFor="report-status"
-                className="mb-2 block text-sm font-medium text-slate-700"
+                className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400"
               >
                 Report status
               </label>
@@ -229,7 +228,7 @@ export default function MyReportsPage() {
                 id="report-status"
                 value={status}
                 onChange={(event) => changeStatus(event.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white p-3 text-sm outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-3 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-cyan-500"
               >
                 {statuses.map((value) => (
                   <option key={value} value={value}>
@@ -245,36 +244,37 @@ export default function MyReportsPage() {
 
         {/* Loading state */}
         {loading && (
-          <div className="rounded-xl bg-white p-8 text-center text-slate-500 shadow-sm">
-            Loading your reports...
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-8 text-center text-slate-500 dark:text-slate-400 shadow-sm">
+            <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-cyan-500 border-t-transparent"></div>
+            <p className="mt-2 text-sm">Loading your reports...</p>
           </div>
         )}
 
         {/* Error state */}
         {error && (
-          <div className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+          <div className="mb-5 rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-4 text-red-700 dark:text-red-400">
             {error}
           </div>
         )}
 
         {/* Empty state */}
         {!loading && !error && reports.length === 0 && (
-          <div className="rounded-xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-10 text-center shadow-sm">
             <div className="text-4xl">🔎</div>
 
-            <h3 className="mt-4 font-semibold text-slate-900">
+            <h3 className="mt-4 font-bold text-slate-900 dark:text-white">
               No reports found
             </h3>
 
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               You have not submitted any reports matching these filters.
             </p>
 
             <a
               href="/report"
-              className="mt-5 inline-block rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700"
+              className="mt-5 inline-block rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110"
             >
-              Report an item
+              + Report an item
             </a>
           </div>
         )}
@@ -290,7 +290,7 @@ export default function MyReportsPage() {
               return (
                 <article
                   key={report.report_id}
-                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-5 shadow-sm backdrop-blur transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-700 sm:p-6"
                 >
                   {/* Report heading */}
                   <div className="flex flex-wrap items-start justify-between gap-3">
@@ -299,11 +299,11 @@ export default function MyReportsPage() {
                         Report #{report.report_id} · {report.report_type}
                       </p>
 
-                      <h3 className="mt-2 text-xl font-bold text-slate-900">
+                      <h3 className="mt-2 text-xl font-bold text-slate-900 dark:text-white">
                         {report.title}
                       </h3>
 
-                      <p className="mt-1 text-sm text-slate-500">
+                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                         {report.category_name}
                       </p>
                     </div>
@@ -318,18 +318,18 @@ export default function MyReportsPage() {
                   </div>
 
                   {/* Description */}
-                  <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-slate-600">
+                  <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-slate-600 dark:text-slate-300">
                     {report.description}
                   </p>
 
                   {/* Report information */}
-                  <div className="mt-5 grid gap-3 rounded-xl bg-slate-50 p-4 text-sm sm:grid-cols-2">
+                  <div className="mt-5 grid gap-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4 text-sm sm:grid-cols-2">
                     <div>
                       <p className="text-xs font-medium uppercase text-slate-400">
                         Location
                       </p>
 
-                      <p className="mt-1 font-medium text-slate-800">
+                      <p className="mt-1 font-medium text-slate-800 dark:text-slate-200">
                         {report.location_name || "Not specified"}
                       </p>
                     </div>
@@ -339,7 +339,7 @@ export default function MyReportsPage() {
                         Brand and colour
                       </p>
 
-                      <p className="mt-1 font-medium text-slate-800">
+                      <p className="mt-1 font-medium text-slate-800 dark:text-slate-200">
                         {[report.brand, report.color]
                           .filter(Boolean)
                           .join(" · ") || "Not specified"}
@@ -351,7 +351,7 @@ export default function MyReportsPage() {
                         Item event date
                       </p>
 
-                      <p className="mt-1 font-medium text-slate-800">
+                      <p className="mt-1 font-medium text-slate-800 dark:text-slate-200">
                         {report.event_datetime
                           ? new Date(report.event_datetime).toLocaleString()
                           : "Not specified"}
@@ -363,7 +363,7 @@ export default function MyReportsPage() {
                         Report submitted
                       </p>
 
-                      <p className="mt-1 font-medium text-slate-800">
+                      <p className="mt-1 font-medium text-slate-800 dark:text-slate-200">
                         {new Date(report.created_at).toLocaleString()}
                       </p>
                     </div>

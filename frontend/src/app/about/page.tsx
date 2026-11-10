@@ -3,17 +3,6 @@ import Link from "next/link";
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-[#080d18] text-white">
-      <header className="border-b border-white/10 bg-[#080d18]/90 px-6 py-5">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link href="/" className="text-2xl font-black tracking-tight">LostLink<span className="text-cyan-400">.</span></Link>
-          <div className="flex items-center gap-5 text-sm text-slate-300">
-            <Link href="/" className="hover:text-cyan-400">Home</Link>
-            <Link href="/matches" className="hover:text-cyan-400">Explore</Link>
-            <Link href="/contact" className="hover:text-cyan-400">Contact</Link>
-          </div>
-        </nav>
-      </header>
-
       <section className="mx-auto max-w-5xl px-6 py-20">
         <p className="mb-4 text-sm font-bold uppercase tracking-[0.25em] text-cyan-400">ABOUT LOSTLINK</p>
         <h1 className="max-w-3xl text-5xl font-black leading-tight sm:text-6xl">

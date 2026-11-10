@@ -327,21 +327,6 @@ export default function ReportPage() {
 
   return (
     <main className="ll-page min-h-screen">
-      <header className="ll-nav">
-        <div className="ll-nav-inner">
-          <Link href="/" className="ll-brand">
-            <span className="ll-logo">L</span>
-            <span>
-              lostlink<span className="ll-dot">.</span>
-            </span>
-          </Link>
-
-          <Link href="/" className="ll-login">
-            ← Back to home
-          </Link>
-        </div>
-      </header>
-
       <section className="ll-report-page">
         <div className="ll-report-heading">
           <span className="ll-eyebrow">

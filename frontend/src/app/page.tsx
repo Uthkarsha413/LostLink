@@ -162,189 +162,6 @@ export default function Home() {
   return (
     <main className="ll-page min-h-screen overflow-hidden">
 
-      {/* NAVBAR */}
-      <header className="ll-nav">
-        <div className="ll-nav-inner">
-
-          <Link href="/" className="ll-brand">
-            <span className="ll-logo">L</span>
-            <span>
-              lostlink<span className="ll-dot">.</span>
-            </span>
-          </Link>
-
-          {/* DESKTOP NAVIGATION */}
-          <nav className="ll-desktop-nav">
-            <Link href="/">Home</Link>
-            <Link href="/matches">Lost & Found</Link>
-            <Link href="/matches">AI Search</Link>
-            <Link href="/report">Report Item</Link>
-
-            {user && (
-              <>
-                <Link href="/my-reports">My Reports</Link>
-                <Link href="/claims">My Claims</Link>
-                <Link href="/notifications">Notifications</Link>
-              </>
-            )}
-
-            {user?.roles?.includes("MODERATOR") && (
-              <Link href="/moderator">Moderator</Link>
-            )}
-
-            {user?.roles?.includes("ADMIN") && (
-              <>
-                <Link href="/admin">Admin</Link>
-                <Link href="/admin/analytics">Analytics</Link>
-              </>
-            )}
-
-            <a href="#how">How it works</a>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
-          </nav>
-
-          <div className="ll-nav-actions">
-
-            <button
-              onClick={toggleTheme}
-              className="ll-theme-button"
-              aria-label="Toggle light and dark theme"
-              title="Toggle theme"
-            >
-              <Icon name={dark ? "sun" : "moon"} size={18} />
-            </button>
-
-            {authLoading ? (
-              <span className="ll-login">Loading...</span>
-            ) : user ? (
-              <>
-                <span className="ll-login">
-                  Welcome, {user.fullName.split(" ")[0]}
-                </span>
-
-                <button
-                  onClick={handleLogout}
-                  disabled={loggingOut}
-                  className="ll-nav-cta"
-                >
-                  {loggingOut ? "Logging out..." : "Log out"}
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" className="ll-login">
-                  Log in
-                </Link>
-
-                <Link href="/register" className="ll-nav-cta">
-                  Get started <Icon name="arrow" size={15} />
-                </Link>
-              </>
-            )}
-
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="ll-mobile-menu"
-              aria-label="Toggle navigation"
-              aria-expanded={menuOpen}
-            >
-              <Icon name="menu" />
-            </button>
-          </div>
-        </div>
-
-        {/* MOBILE NAVIGATION */}
-        {menuOpen && (
-          <div className="ll-mobile-links">
-
-            <Link href="/" onClick={() => setMenuOpen(false)}>
-              Home
-            </Link>
-
-            <Link href="/matches" onClick={() => setMenuOpen(false)}>
-              Lost & Found Feed
-            </Link>
-
-            <Link href="/matches" onClick={() => setMenuOpen(false)}>
-              AI Search
-            </Link>
-
-            <Link href="/report" onClick={() => setMenuOpen(false)}>
-              Report an Item
-            </Link>
-
-            {user && (
-              <>
-                <Link href="/my-reports" onClick={() => setMenuOpen(false)}>
-                  My Reports
-                </Link>
-
-                <Link href="/claims" onClick={() => setMenuOpen(false)}>
-                  My Claims
-                </Link>
-
-                <Link href="/notifications" onClick={() => setMenuOpen(false)}>
-                  Notifications
-                </Link>
-              </>
-            )}
-
-            {user?.roles?.includes("MODERATOR") && (
-              <Link href="/moderator" onClick={() => setMenuOpen(false)}>
-                Moderator Dashboard
-              </Link>
-            )}
-
-            {user?.roles?.includes("ADMIN") && (
-              <>
-                <Link href="/admin" onClick={() => setMenuOpen(false)}>
-                  Admin Dashboard
-                </Link>
-                <Link href="/admin/analytics" onClick={() => setMenuOpen(false)}>
-                  Analytics Dashboard
-                </Link>
-              </>
-            )}
-
-            <a href="#how" onClick={() => setMenuOpen(false)}>
-              How it works
-            </a>
-
-            <a href="#technology" onClick={() => setMenuOpen(false)}>
-              Technology
-            </a>
-
-            <Link href="/about" onClick={() => setMenuOpen(false)}>
-              About
-            </Link>
-
-            {authLoading ? null : user ? (
-              <>
-                <span>Welcome, {user.fullName}</span>
-
-                <button
-                  onClick={handleLogout}
-                  disabled={loggingOut}
-                >
-                  {loggingOut ? "Logging out..." : "Log out"}
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" onClick={() => setMenuOpen(false)}>
-                  Log in
-                </Link>
-
-                <Link href="/register" onClick={() => setMenuOpen(false)}>
-                  Get started
-                </Link>
-              </>
-            )}
-          </div>
-        )}
-      </header>
-
       {/* HERO */}
       <section className="ll-hero">
         <div className="ll-orb ll-orb-one" />
@@ -529,6 +346,83 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FEATURED CAPABILITIES CARDS */}
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <div className="text-center mb-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-300">
+            ✦ ADVANCED CAMPUS ECOSYSTEM
+          </span>
+          <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            Smart Features Built for <span className="vibe-gradient-text-cyan">PES University</span>
+          </h2>
+          <p className="mt-2 text-sm text-slate-400 max-w-xl mx-auto">
+            Explore live item tracking, cryptographic handovers, and executive analytics in real time.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Feature 1: Analytics */}
+          <Link
+            href="/admin/analytics"
+            className="group relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/10"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500/20 group-hover:scale-110 transition-all duration-300 text-2xl">
+              📊
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+              Smart Analytics Dashboard
+            </h3>
+            <p className="mt-2 text-xs text-slate-400 leading-relaxed">
+              Real-time campus KPIs, monthly report trends, recovery gauges, and top location frequency maps with interactive date filters.
+            </p>
+            <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-cyan-400">
+              <span>View Analytics</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </div>
+          </Link>
+
+          {/* Feature 2: Timeline */}
+          <Link
+            href="/my-reports"
+            className="group relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-xl hover:shadow-indigo-500/10"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500/20 group-hover:scale-110 transition-all duration-300 text-2xl">
+              📍
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">
+              9-Stage Item Timeline
+            </h3>
+            <p className="mt-2 text-xs text-slate-400 leading-relaxed">
+              Trace reports from initial submission through AI match, review, OTP generation, and dual confirmations with complete actor audit logs.
+            </p>
+            <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-indigo-400">
+              <span>Track Reports</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </div>
+          </Link>
+
+          {/* Feature 3: OTP Handover */}
+          <Link
+            href="/claims"
+            className="group relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/10"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all duration-300 text-2xl">
+              🔐
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
+              Secure OTP Handover
+            </h3>
+            <p className="mt-2 text-xs text-slate-400 leading-relaxed">
+              Cryptographically hashed 6-digit OTP verification, 10-minute expiry, rate-limited attempts, and dual physical confirmations.
+            </p>
+            <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+              <span>Review Claims</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* HOW IT WORKS */}
       <section id="how" className="ll-section">
         <div className="ll-section-heading">
@@ -680,11 +574,17 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer className="ll-footer">
-        <Link href="/" className="ll-brand">
-          <span className="ll-logo">L</span>
-          <span>
-            lostlink<span className="ll-dot">.</span>
-          </span>
+        <Link href="/" className="flex items-center group">
+          <img
+            src="/lostlink-logo-white.png"
+            alt="LostLink Logo"
+            className="h-8 w-auto hidden dark:block transition-transform duration-200 group-hover:scale-105"
+          />
+          <img
+            src="/lostlink-logo.png"
+            alt="LostLink Logo"
+            className="h-8 w-auto block dark:hidden transition-transform duration-200 group-hover:scale-105"
+          />
         </Link>
 
         <p>Intelligent discovery. Meaningful reunions.</p>

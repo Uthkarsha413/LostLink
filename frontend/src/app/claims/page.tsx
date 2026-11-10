@@ -385,18 +385,18 @@ export default function ClaimsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 sm:px-8">
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 px-4 py-10 sm:px-8 text-slate-900 dark:text-slate-100 transition-colors">
       <div className="mx-auto max-w-4xl">
         {/* Top Header */}
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-6">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+            <p className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
               LostLink Verification
             </p>
-            <h1 className="mt-1 text-3xl font-extrabold text-slate-900">
+            <h1 className="mt-1 text-3xl font-extrabold text-slate-900 dark:text-white">
               Ownership Claims & Secure Handover
             </h1>
-            <p className="mt-1.5 text-sm text-slate-600">
+            <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-400">
               Track your submitted claims, submit evidence, and execute secure OTP-verified item handovers.
             </p>
           </div>
@@ -404,7 +404,7 @@ export default function ClaimsPage() {
           <button
             onClick={loadClaims}
             disabled={loading}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-100 disabled:opacity-50"
+            className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-100 dark:hover:bg-slate-700/70 disabled:opacity-50 transition-colors"
           >
             {loading ? "Refreshing..." : "↻ Refresh Claims"}
           </button>
@@ -412,28 +412,28 @@ export default function ClaimsPage() {
 
         {/* Global Loading / Error */}
         {loading && (
-          <div className="rounded-xl bg-white p-8 text-center text-slate-500 shadow-sm">
-            <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-8 text-center text-slate-500 dark:text-slate-400 shadow-sm">
+            <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-cyan-500 border-t-transparent"></div>
             <p className="mt-2 text-sm">Loading ownership claims...</p>
           </div>
         )}
 
         {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="mb-6 rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-4 text-sm text-red-700 dark:text-red-400">
             {error}
           </div>
         )}
 
         {!loading && !error && claims.length === 0 && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/70 p-12 text-center shadow-sm">
             <div className="text-4xl">📂</div>
-            <h3 className="mt-3 font-semibold text-slate-900 text-lg">No claims found</h3>
-            <p className="mt-1 text-sm text-slate-500">
+            <h3 className="mt-3 font-bold text-slate-900 dark:text-white text-lg">No claims found</h3>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               When an item is matched and an ownership claim is submitted, it will appear here.
             </p>
             <Link
               href="/matches"
-              className="mt-5 inline-block rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+              className="mt-5 inline-block rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110"
             >
               Browse AI Matches
             </Link>
@@ -462,31 +462,31 @@ export default function ClaimsPage() {
             return (
               <section
                 key={claim.claim_id}
-                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 shadow-sm backdrop-blur"
               >
                 {/* Header */}
-                <div className="border-b border-slate-100 bg-slate-50/50 p-5 sm:p-6">
+                <div className="border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/40 p-5 sm:p-6">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold uppercase text-slate-500">
+                        <span className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
                           Claim #{claim.claim_id}
                         </span>
                         {isUserClaimant && (
-                          <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-bold text-blue-700">
+                          <span className="rounded-full bg-blue-100 dark:bg-blue-900/40 px-2 py-0.5 text-[11px] font-bold text-blue-700 dark:text-blue-300">
                             YOU ARE OWNER
                           </span>
                         )}
                         {isUserFinder && (
-                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                          <span className="rounded-full bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
                             YOU ARE FINDER
                           </span>
                         )}
                       </div>
-                      <h3 className="mt-1 text-xl font-bold text-slate-900">
+                      <h3 className="mt-1 text-xl font-bold text-slate-900 dark:text-white">
                         {claim.lost_item_title}
                       </h3>
-                      <p className="text-xs text-slate-500 mt-0.5">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                         Submitted: {new Date(claim.submitted_at).toLocaleString()}
                       </p>
                     </div>
@@ -501,7 +501,7 @@ export default function ClaimsPage() {
                       </span>
                       <Link
                         href={`/reports/${claim.lost_report_id}/timeline`}
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                        className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                         title="View 9-Stage Timeline"
                       >
                         🧭 Track Timeline
@@ -510,20 +510,20 @@ export default function ClaimsPage() {
                   </div>
 
                   {/* Summary of Lost and Found reports */}
-                  <div className="mt-4 grid gap-3 rounded-xl bg-white p-3.5 border border-slate-200/80 text-sm sm:grid-cols-2">
+                  <div className="mt-4 grid gap-3 rounded-xl bg-white dark:bg-slate-900/60 p-3.5 border border-slate-200/80 dark:border-slate-800 text-sm sm:grid-cols-2">
                     <div>
                       <span className="text-xs font-semibold uppercase text-slate-400">
                         Lost Item (Claimant)
                       </span>
-                      <p className="font-semibold text-slate-800">{claim.lost_item_title}</p>
-                      <p className="text-xs text-slate-500">Report #{claim.lost_report_id}</p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">{claim.lost_item_title}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Report #{claim.lost_report_id}</p>
                     </div>
                     <div>
                       <span className="text-xs font-semibold uppercase text-slate-400">
                         Found Item (Finder)
                       </span>
-                      <p className="font-semibold text-slate-800">{claim.found_item_title}</p>
-                      <p className="text-xs text-slate-500">Report #{claim.found_report_id}</p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">{claim.found_item_title}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Report #{claim.found_report_id}</p>
                     </div>
                   </div>
                 </div>
@@ -531,8 +531,8 @@ export default function ClaimsPage() {
                 <div className="p-5 sm:p-6 space-y-6">
                   {/* SECURE HANDOVER WORKFLOW (WHEN APPROVED OR COMPLETED) */}
                   {isApprovedOrHandedOver && (
-                    <div className="rounded-2xl border-2 border-cyan-500/30 bg-gradient-to-br from-cyan-50/40 via-white to-blue-50/30 p-5 sm:p-6">
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-cyan-100 pb-3">
+                    <div className="rounded-2xl border-2 border-cyan-500/30 bg-gradient-to-br from-cyan-50/40 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-950 p-5 sm:p-6">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-cyan-100 dark:border-slate-800 pb-3">
                         <div className="flex items-center gap-2">
                           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-cyan-600 text-white font-bold text-xs">
                             🔐
