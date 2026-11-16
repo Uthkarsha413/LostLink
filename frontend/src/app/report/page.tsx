@@ -320,10 +320,10 @@ export default function ReportPage() {
   // Loading screen
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <main className="min-h-screen bg-slate-950 flex items-center justify-center vibe-grid-pattern">
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/15 rounded-full blur-[140px]" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-600/15 rounded-full blur-[140px]" />
         </div>
         <div className="text-center space-y-4">
           <div className="inline-block w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
@@ -334,11 +334,11 @@ export default function ReportPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white sm:px-8 vibe-grid-pattern">
       {/* Ambient background orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[140px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-blue-500/3 rounded-full blur-3xl" />
       </div>
 
@@ -360,7 +360,7 @@ export default function ReportPage() {
         </div>
 
         {/* Lost / Found toggle */}
-        <div className="mb-8 flex rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-1.5 backdrop-blur gap-1.5">
+        <div className="mb-8 flex vibe-card vibe-card-hover rounded-2xl p-6 p-1.5 backdrop-blur gap-1.5">
           <button
             type="button"
             onClick={() => setReportType("LOST")}
@@ -377,7 +377,7 @@ export default function ReportPage() {
             onClick={() => setReportType("FOUND")}
             className={`flex-1 rounded-xl py-3 px-4 text-sm font-bold transition-all ${
               reportType === "FOUND"
-                ? "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 text-white shadow-lg shadow-cyan-500/20"
+                ? "bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 shadow-lg shadow-purple-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 text-white shadow-lg shadow-cyan-500/20"
                 : "text-slate-400 hover:text-white"
             }`}
           >
@@ -387,7 +387,7 @@ export default function ReportPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Section 1: Item Information */}
-          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur space-y-5">
+          <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur space-y-5">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 📦 Item Information
@@ -469,7 +469,7 @@ export default function ReportPage() {
           </div>
 
           {/* Section 2: Where & When */}
-          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur space-y-5">
+          <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur space-y-5">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 📍 Where &amp; When?
@@ -545,7 +545,7 @@ export default function ReportPage() {
           </div>
 
           {/* Section 3: Item Photos */}
-          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur space-y-5">
+          <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur space-y-5">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 🖼️ Item Photos
@@ -631,7 +631,7 @@ export default function ReportPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-5 py-4 font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 hover:scale-[1.02] active:scale-100 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 text-base"
+            className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 shadow-lg shadow-purple-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 px-5 py-4 font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 hover:scale-[1.02] active:scale-100 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 text-base"
           >
             {submitting ? (
               <span className="flex items-center justify-center gap-3">

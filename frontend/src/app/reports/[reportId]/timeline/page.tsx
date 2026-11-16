@@ -85,10 +85,10 @@ function TimelineContent({ params }: { params: Promise<{ reportId: string }> }) 
   }, [reportId]);
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8 vibe-grid-pattern">
       {/* Ambient glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-20 right-1/4 w-96 h-96 bg-cyan-500/15 rounded-full blur-[140px]" />
         <div className="absolute bottom-20 left-1/4 w-80 h-80 bg-indigo-500/4 rounded-full blur-3xl" />
       </div>
 
@@ -105,7 +105,7 @@ function TimelineContent({ params }: { params: Promise<{ reportId: string }> }) 
 
         {/* Loading */}
         {loading && (
-          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-16 text-center backdrop-blur">
+          <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-16 text-center backdrop-blur">
             <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
             <p className="mt-4 font-semibold text-slate-300">Loading item lifecycle timeline...</p>
             <p className="mt-1 text-xs text-slate-500">Fetching all 9 stages from the database</p>
@@ -123,7 +123,7 @@ function TimelineContent({ params }: { params: Promise<{ reportId: string }> }) 
         {!loading && !error && data && (
           <>
             {/* Report Header Card */}
-            <div className="mb-6 rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur shadow-xl sm:p-8">
+            <div className="mb-6 vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur shadow-xl sm:p-8">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -185,7 +185,7 @@ function TimelineContent({ params }: { params: Promise<{ reportId: string }> }) 
             </div>
 
             {/* Stage Stepper */}
-            <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur shadow-xl sm:p-8">
+            <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur shadow-xl sm:p-8">
               <h2 className="mb-6 text-lg font-bold text-white">🔄 Item Verification Lifecycle</h2>
 
               <div className="relative">
@@ -291,7 +291,7 @@ export default function ReportTimelinePage(props: { params: Promise<{ reportId: 
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
+        <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8 vibe-grid-pattern">
           <div className="mx-auto max-w-4xl rounded-2xl border border-slate-800 bg-slate-900 p-16 text-center">
             <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
             <p className="mt-4 font-semibold text-slate-300">Loading item lifecycle timeline...</p>

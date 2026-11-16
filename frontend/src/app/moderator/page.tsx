@@ -188,11 +188,11 @@ export default function ModeratorPage() {
   const canReviewStatuses = ["SUBMITTED", "AI_REVIEW_PENDING", "MODERATOR_REVIEW"];
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8 vibe-grid-pattern">
       {/* Ambient background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/15 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/15 rounded-full blur-[140px]" />
       </div>
 
       <div className="relative mx-auto max-w-6xl">
@@ -352,7 +352,7 @@ export default function ModeratorPage() {
                 {filteredImages.map((image) => (
                   <article
                     key={image.imageId}
-                    className="overflow-hidden rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl backdrop-blur transition-all hover:border-indigo-500/40"
+                    className="overflow-hidden vibe-card vibe-card-hover rounded-2xl p-6 backdrop-blur transition-all hover:border-indigo-500/40"
                   >
                     {/* Image preview */}
                     <a href={image.imageUrl} target="_blank" rel="noopener noreferrer" className="block bg-slate-950 relative">
@@ -496,7 +496,7 @@ export default function ModeratorPage() {
                 return (
                   <article
                     key={claim.claim_id}
-                    className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur transition-all hover:border-indigo-500/30"
+                    className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur transition-all hover:border-indigo-500/30"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>

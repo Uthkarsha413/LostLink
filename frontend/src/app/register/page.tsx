@@ -49,7 +49,7 @@ export default function RegisterPage() {
   const inputClass = 'w-full rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/10 transition-all';
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12 text-white relative overflow-hidden">
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12 text-white relative overflow-hidden vibe-grid-pattern">
       {/* Animated orbs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/8 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-500/6 rounded-full blur-3xl" />
@@ -64,7 +64,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Card */}
-        <section className="rounded-3xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-7 shadow-2xl backdrop-blur-xl sm:p-9">
+        <section className="vibe-card vibe-card-hover rounded-3xl p-7 shadow-2xl backdrop-blur-xl sm:p-9">
           <p className="mb-2 text-xs font-bold tracking-[0.25em] text-cyan-400 uppercase">
             🎓 Join LostLink
           </p>
@@ -152,7 +152,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-4 py-3 font-bold text-white shadow-lg shadow-cyan-500/20 transition-all hover:brightness-110 hover:scale-[1.02] active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 shadow-lg shadow-purple-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 px-4 py-3 font-bold text-white shadow-lg shadow-cyan-500/20 transition-all hover:brightness-110 hover:scale-[1.02] active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

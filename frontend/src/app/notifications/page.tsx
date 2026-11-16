@@ -108,10 +108,10 @@ export default function NotificationsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-6">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-6 vibe-grid-pattern">
       {/* Ambient glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/15 rounded-full blur-[140px]" />
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-500/4 rounded-full blur-3xl" />
       </div>
 
@@ -176,7 +176,7 @@ export default function NotificationsPage() {
             <p className="mt-4 text-sm">Loading notifications...</p>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-16 text-center backdrop-blur">
+          <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-16 text-center backdrop-blur">
             <div className="text-6xl mb-4">🔔</div>
             <h2 className="text-xl font-bold">No Notifications Yet</h2>
             <p className="mt-2 text-sm text-slate-400">

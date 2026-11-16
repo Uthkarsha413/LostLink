@@ -2,11 +2,11 @@ import Link from "next/link";
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-slate-950 text-white vibe-grid-pattern">
       {/* Ambient orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-[140px]" />
       </div>
 
       <section className="relative mx-auto max-w-4xl px-6 py-20">
@@ -136,7 +136,7 @@ export default function ContactPage() {
         </div>
 
         {/* Quick links */}
-        <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur">
+        <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">
             🔗 Quick Navigation
           </h3>

@@ -123,11 +123,11 @@ export default function AdminDashboard() {
   const approvedClaims = claims.filter((c) => c.claim_status === "APPROVED");
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8 vibe-grid-pattern">
       {/* Ambient glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/15 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-600/15 rounded-full blur-[140px]" />
       </div>
 
       <div className="relative mx-auto max-w-6xl">
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
               <p className="mt-4 text-sm">Loading claims...</p>
             </div>
           ) : pendingClaims.length === 0 ? (
-            <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-10 text-center backdrop-blur">
+            <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-10 text-center backdrop-blur">
               <div className="text-5xl mb-4">✅</div>
               <h3 className="text-lg font-bold">No Claims Awaiting Review</h3>
               <p className="mt-2 text-sm text-slate-400">
@@ -417,7 +417,7 @@ export default function AdminDashboard() {
           </div>
 
           {approvedClaims.length === 0 ? (
-            <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-10 text-center backdrop-blur">
+            <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-10 text-center backdrop-blur">
               <div className="text-5xl mb-4">🎁</div>
               <h3 className="font-bold text-white">No Approved Claims Awaiting Handover</h3>
               <p className="mt-2 text-sm text-slate-400">Claims approved by an administrator will appear here.</p>

@@ -52,7 +52,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12 text-white">
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12 text-white vibe-grid-pattern">
       <div className="w-full max-w-md">
         {/* BRAND LOGO */}
         <div className="mb-8 text-center flex justify-center">
@@ -61,7 +61,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <section className="rounded-3xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-7 shadow-2xl backdrop-blur-xl sm:p-9">
+        <section className="vibe-card vibe-card-hover rounded-3xl p-7 shadow-2xl backdrop-blur-xl sm:p-9">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">
             Welcome back
           </p>
@@ -140,7 +140,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 py-3 font-bold text-white shadow-lg shadow-cyan-500/20 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 shadow-lg shadow-purple-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 py-3 font-bold text-white shadow-lg shadow-cyan-500/20 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Signing in...' : 'Sign in to LostLink'}
             </button>

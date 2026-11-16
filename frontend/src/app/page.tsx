@@ -108,15 +108,15 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
+    <main className="min-h-screen bg-slate-950 text-white overflow-x-hidden vibe-grid-pattern">
 
       {/* ━━━━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━━━━ */}
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden px-4">
         {/* Animated background orbs */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-40 top-0 h-[600px] w-[600px] rounded-full bg-cyan-500/10 blur-[120px] animate-pulse" />
-          <div className="absolute -right-40 bottom-0 h-[500px] w-[500px] rounded-full bg-indigo-500/10 blur-[120px] animate-pulse" style={{ animationDelay: "1.5s" }} />
-          <div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/5 blur-[100px]" />
+          <div className="absolute -left-40 top-0 h-[600px] w-[600px] rounded-full bg-purple-600/20 blur-[140px] animate-pulse" />
+          <div className="absolute -right-40 bottom-0 h-[500px] w-[500px] rounded-full bg-blue-600/20 blur-[140px] animate-pulse" style={{ animationDelay: "1.5s" }} />
+          <div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/15 blur-[120px]" />
           {/* Grid pattern */}
           <div
             className="absolute inset-0 opacity-[0.03]"
@@ -220,7 +220,7 @@ export default function Home() {
             />
             <button
               type="submit"
-              className="shrink-0 rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-5 py-2 text-sm font-bold text-white hover:brightness-110 transition-all"
+              className="shrink-0 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 shadow-lg shadow-purple-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 px-5 py-2 text-sm font-bold text-white hover:brightness-110 transition-all"
             >
               Search →
             </button>
@@ -374,12 +374,12 @@ export default function Home() {
               </p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
                 {user ? (
-                  <Link href="/report" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-8 py-3.5 text-sm font-black text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.03] transition-all">
+                  <Link href="/report" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 shadow-lg shadow-purple-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 px-8 py-3.5 text-sm font-black text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.03] transition-all">
                     <span>📸</span> Report an Item →
                   </Link>
                 ) : (
                   <>
-                    <Link href="/register" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-8 py-3.5 text-sm font-black text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.03] transition-all">
+                    <Link href="/register" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 shadow-lg shadow-purple-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 px-8 py-3.5 text-sm font-black text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.03] transition-all">
                       <span>🚀</span> Get Started →
                     </Link>
                     <Link href="/login" className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-800 px-8 py-3.5 text-sm font-bold text-slate-300 hover:bg-slate-700 transition-all">

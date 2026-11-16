@@ -184,11 +184,11 @@ export default function MatchesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8 vibe-grid-pattern">
       {/* Ambient glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/15 rounded-full blur-[140px]" />
       </div>
 
       <div className="relative mx-auto max-w-5xl">
@@ -325,7 +325,7 @@ export default function MatchesPage() {
         {/* Hybrid Match Finder */}
         <form
           onSubmit={findMatches}
-          className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur sm:p-7"
+          className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur sm:p-7"
         >
           <div className="mb-4">
             <h2 className="text-lg font-bold text-white">🧠 Hybrid AI Match Finder</h2>
@@ -360,7 +360,7 @@ export default function MatchesPage() {
 
         {/* Loading */}
         {loading && (
-          <div className="mt-8 rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-10 text-center">
+          <div className="mt-8 vibe-card vibe-card-hover rounded-2xl p-6 p-10 text-center">
             <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-violet-400 border-t-transparent" />
             <p className="text-sm text-slate-300">Comparing reports and calculating similarity across signals...</p>
           </div>
@@ -385,7 +385,7 @@ export default function MatchesPage() {
             </div>
 
             {matches.length === 0 ? (
-              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-10 text-center backdrop-blur">
+              <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-10 text-center backdrop-blur">
                 <div className="text-5xl mb-4">🔍</div>
                 <p className="text-lg font-bold">No Matches Found Yet</p>
                 <p className="mt-2 text-sm text-slate-400">Try again when more relevant FOUND reports are available.</p>
@@ -395,7 +395,7 @@ export default function MatchesPage() {
                 {matches.map((match) => (
                   <article
                     key={match.found_report_id}
-                    className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur sm:p-7 transition-all hover:border-violet-500/30"
+                    className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur sm:p-7 transition-all hover:border-violet-500/30"
                   >
                     {/* Match header */}
                     <div className="flex flex-wrap items-start justify-between gap-4">

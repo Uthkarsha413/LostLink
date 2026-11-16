@@ -84,10 +84,10 @@ export default function AdminAnalyticsDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8 vibe-grid-pattern">
       {/* Ambient glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/15 rounded-full blur-[140px]" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-500/4 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-emerald-500/3 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       </div>
@@ -122,7 +122,7 @@ export default function AdminAnalyticsDashboard() {
           </div>
 
           {/* Date Range Filters */}
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-4 backdrop-blur">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 vibe-card vibe-card-hover rounded-2xl p-6 p-4 backdrop-blur">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-semibold text-slate-400 mr-1">📅 Timeframe:</span>
               {[
@@ -232,7 +232,7 @@ export default function AdminAnalyticsDashboard() {
             {/* ROW 1: Lost vs Found + Trends */}
             <div className="grid gap-6 lg:grid-cols-12">
               {/* Lost vs Found Bar Chart */}
-              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur lg:col-span-5">
+              <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur lg:col-span-5">
                 <h3 className="text-base font-bold text-white">📊 Lost vs Found Distribution</h3>
                 <p className="mt-1 text-xs text-slate-400">Comparison of reports filed this period</p>
 
@@ -272,7 +272,7 @@ export default function AdminAnalyticsDashboard() {
               </div>
 
               {/* Report Activity Trends */}
-              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur lg:col-span-7">
+              <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur lg:col-span-7">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-bold text-white">📈 Report Activity Trends</h3>
@@ -329,7 +329,7 @@ export default function AdminAnalyticsDashboard() {
             {/* ROW 2: Categories + Recovery + Locations */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {/* Categories */}
-              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur">
+              <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur">
                 <h3 className="text-base font-bold text-white">🏷️ Item Categories</h3>
                 <p className="mt-1 text-xs text-slate-400">Distribution by type</p>
 
@@ -364,7 +364,7 @@ export default function AdminAnalyticsDashboard() {
               </div>
 
               {/* Recovery Rate */}
-              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur flex flex-col justify-between">
+              <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur flex flex-col justify-between">
                 <div>
                   <h3 className="text-base font-bold text-white">🔄 Recovery Statistics</h3>
                   <p className="mt-1 text-xs text-slate-400">Campus resolution efficacy</p>
@@ -404,7 +404,7 @@ export default function AdminAnalyticsDashboard() {
               </div>
 
               {/* Campus Hot Spots */}
-              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur">
+              <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur">
                 <h3 className="text-base font-bold text-white">📍 Campus Hot Spots</h3>
                 <p className="mt-1 text-xs text-slate-400">Locations with highest reported incidents</p>
 
@@ -438,7 +438,7 @@ export default function AdminAnalyticsDashboard() {
             </div>
 
             {/* ROW 3: Claims breakdown */}
-            <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur">
+            <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-6 backdrop-blur">
               <h3 className="text-base font-bold text-white">⚖️ Ownership Claim Verification Overview</h3>
               <p className="mt-1 text-xs text-slate-400">Total claims filed: {data.kpis.totalClaims}</p>
 

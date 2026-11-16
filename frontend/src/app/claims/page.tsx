@@ -170,10 +170,10 @@ export default function ClaimsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-8 vibe-grid-pattern">
       {/* Ambient glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-cyan-500/15 rounded-full blur-[140px]" />
         <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-blue-500/4 rounded-full blur-3xl" />
       </div>
 
@@ -215,7 +215,7 @@ export default function ClaimsPage() {
 
         {/* Empty */}
         {!loading && !error && claims.length === 0 && (
-          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-14 text-center backdrop-blur">
+          <div className="vibe-card vibe-card-hover rounded-2xl p-6 p-14 text-center backdrop-blur">
             <div className="text-6xl mb-4">📂</div>
             <h3 className="text-xl font-bold">No Claims Found</h3>
             <p className="mt-2 text-sm text-slate-400">
@@ -223,7 +223,7 @@ export default function ClaimsPage() {
             </p>
             <Link
               href="/matches"
-              className="mt-6 inline-block rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 transition-all"
+              className="mt-6 inline-block rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 shadow-lg shadow-purple-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-95 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 transition-all"
             >
               🤖 Browse AI Matches
             </Link>
@@ -243,7 +243,7 @@ export default function ClaimsPage() {
             return (
               <section
                 key={claim.claim_id}
-                className="overflow-hidden rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl backdrop-blur transition-all hover:border-slate-700"
+                className="overflow-hidden vibe-card vibe-card-hover rounded-2xl p-6 backdrop-blur transition-all hover:border-slate-700"
               >
                 {/* Claim header */}
                 <div className="border-b border-slate-800 bg-slate-800/40 p-5 sm:p-6">
