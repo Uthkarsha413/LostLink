@@ -325,7 +325,7 @@ export default function MatchesPage() {
         {/* Hybrid Match Finder */}
         <form
           onSubmit={findMatches}
-          className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur sm:p-7"
+          className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur sm:p-7"
         >
           <div className="mb-4">
             <h2 className="text-lg font-bold text-white">🧠 Hybrid AI Match Finder</h2>
@@ -360,7 +360,7 @@ export default function MatchesPage() {
 
         {/* Loading */}
         {loading && (
-          <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center">
+          <div className="mt-8 rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-10 text-center">
             <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-violet-400 border-t-transparent" />
             <p className="text-sm text-slate-300">Comparing reports and calculating similarity across signals...</p>
           </div>
@@ -385,7 +385,7 @@ export default function MatchesPage() {
             </div>
 
             {matches.length === 0 ? (
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center backdrop-blur">
+              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-10 text-center backdrop-blur">
                 <div className="text-5xl mb-4">🔍</div>
                 <p className="text-lg font-bold">No Matches Found Yet</p>
                 <p className="mt-2 text-sm text-slate-400">Try again when more relevant FOUND reports are available.</p>
@@ -395,7 +395,7 @@ export default function MatchesPage() {
                 {matches.map((match) => (
                   <article
                     key={match.found_report_id}
-                    className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur sm:p-7 transition-all hover:border-violet-500/30"
+                    className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur sm:p-7 transition-all hover:border-violet-500/30"
                   >
                     {/* Match header */}
                     <div className="flex flex-wrap items-start justify-between gap-4">

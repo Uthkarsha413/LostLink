@@ -149,7 +149,7 @@ export default function MyReportsPage() {
         </section>
 
         {/* Filters */}
-        <section className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 backdrop-blur">
+        <section className="mb-6 rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-5 backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="font-bold text-white">Your submitted reports</h2>
@@ -215,7 +215,7 @@ export default function MyReportsPage() {
 
         {/* Empty state */}
         {!loading && !error && reports.length === 0 && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-12 text-center backdrop-blur">
+          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-12 text-center backdrop-blur">
             <div className="text-6xl mb-4">🔎</div>
             <h3 className="text-xl font-bold">No Reports Found</h3>
             <p className="mt-2 text-sm text-slate-400">
@@ -223,7 +223,7 @@ export default function MyReportsPage() {
             </p>
             <a
               href="/report"
-              className="mt-6 inline-block rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 transition-all"
+              className="mt-6 inline-block rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 transition-all"
             >
               ➕ Report an Item
             </a>
@@ -241,7 +241,7 @@ export default function MyReportsPage() {
               return (
                 <article
                   key={report.report_id}
-                  className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5 backdrop-blur transition-all hover:border-slate-700 sm:p-6 group"
+                  className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-5 backdrop-blur transition-all hover:border-slate-700 sm:p-6 group"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>

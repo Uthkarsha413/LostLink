@@ -19,7 +19,7 @@ export default function ContactPage() {
             <span className="bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
               We&apos;re here to{" "}
             </span>
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">
               help.
             </span>
           </h1>
@@ -136,7 +136,7 @@ export default function ContactPage() {
         </div>
 
         {/* Quick links */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur">
+        <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">
             🔗 Quick Navigation
           </h3>

@@ -176,7 +176,7 @@ export default function AdminDashboard() {
                   stat.color === "amber" ? "border-amber-900/40 bg-amber-950/10" :
                   stat.color === "emerald" ? "border-emerald-900/40 bg-emerald-950/10" :
                   stat.color === "cyan" ? "border-cyan-900/40 bg-slate-900/80" :
-                  "border-slate-800 bg-slate-900/80"
+                  "border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl"
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
               <p className="mt-4 text-sm">Loading claims...</p>
             </div>
           ) : pendingClaims.length === 0 ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center backdrop-blur">
+            <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-10 text-center backdrop-blur">
               <div className="text-5xl mb-4">✅</div>
               <h3 className="text-lg font-bold">No Claims Awaiting Review</h3>
               <p className="mt-2 text-sm text-slate-400">
@@ -417,7 +417,7 @@ export default function AdminDashboard() {
           </div>
 
           {approvedClaims.length === 0 ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center backdrop-blur">
+            <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-10 text-center backdrop-blur">
               <div className="text-5xl mb-4">🎁</div>
               <h3 className="font-bold text-white">No Approved Claims Awaiting Handover</h3>
               <p className="mt-2 text-sm text-slate-400">Claims approved by an administrator will appear here.</p>

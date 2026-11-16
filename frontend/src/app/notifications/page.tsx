@@ -176,7 +176,7 @@ export default function NotificationsPage() {
             <p className="mt-4 text-sm">Loading notifications...</p>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-16 text-center backdrop-blur">
+          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-16 text-center backdrop-blur">
             <div className="text-6xl mb-4">🔔</div>
             <h2 className="text-xl font-bold">No Notifications Yet</h2>
             <p className="mt-2 text-sm text-slate-400">
@@ -190,7 +190,7 @@ export default function NotificationsPage() {
                 key={notification.notification_id}
                 className={`rounded-2xl border p-5 backdrop-blur transition-all hover:border-opacity-70 ${
                   notification.is_read
-                    ? "border-slate-800 bg-slate-900/60"
+                    ? "border-purple-500/15 bg-[#0d1222]/70 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl"
                     : getNotificationAccent(notification.notification_type)
                 }`}
               >

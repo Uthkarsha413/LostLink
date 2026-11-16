@@ -141,7 +141,7 @@ export default function Home() {
           <h1 className={`mt-7 text-5xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-8xl transition-all duration-700 delay-100 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
             Lost something?
             <br />
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
               Let AI find it.
             </span>
           </h1>
@@ -155,7 +155,7 @@ export default function Home() {
           <div className={`mt-10 flex flex-wrap items-center justify-center gap-4 transition-all duration-700 delay-300 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
             <Link
               href="/report"
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 px-7 py-3.5 text-sm font-black text-white shadow-2xl shadow-cyan-500/30 transition-all hover:scale-[1.03] hover:shadow-cyan-500/50 active:scale-95"
+              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 px-7 py-3.5 text-sm font-black text-white shadow-2xl shadow-cyan-500/30 transition-all hover:scale-[1.03] hover:shadow-cyan-500/50 active:scale-95"
             >
               <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span>📸</span>
@@ -182,7 +182,7 @@ export default function Home() {
           {/* Stats Row */}
           <div className={`mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4 transition-all duration-700 delay-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             {stats.map((s) => (
-              <div key={s.label} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 backdrop-blur">
+              <div key={s.label} className="rounded-2xl border border-purple-500/15 bg-[#0d1222]/70 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl p-4 backdrop-blur">
                 <div className="text-2xl">{s.icon}</div>
                 <div className="mt-2 text-2xl font-black text-white">{s.value}</div>
                 <div className="mt-0.5 text-xs text-slate-500">{s.label}</div>
@@ -220,7 +220,7 @@ export default function Home() {
             />
             <button
               type="submit"
-              className="shrink-0 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-2 text-sm font-bold text-white hover:brightness-110 transition-all"
+              className="shrink-0 rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-5 py-2 text-sm font-bold text-white hover:brightness-110 transition-all"
             >
               Search →
             </button>
@@ -260,7 +260,7 @@ export default function Home() {
                 <Link
                   key={f.href}
                   href={f.href}
-                  className={`group relative flex flex-col rounded-2xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl ${c.border} ${c.glow}`}
+                  className={`group relative flex flex-col rounded-2xl border border-purple-500/15 bg-[#0d1222]/70 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl ${c.border} ${c.glow}`}
                 >
                   <div className={`flex h-13 w-13 items-center justify-center rounded-xl ${c.iconBg} text-3xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                     {f.icon}
@@ -287,13 +287,13 @@ export default function Home() {
           <div className="mb-14 text-center">
             <span className="text-xs font-bold uppercase tracking-widest text-cyan-400">⚡ How It Works</span>
             <h2 className="mt-3 text-4xl font-black text-white sm:text-5xl">
-              Lost to found in <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">3 steps.</span>
+              Lost to found in <span className="bg-gradient-to-r from-purple-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">3 steps.</span>
             </h2>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
             {steps.map((s, i) => (
-              <div key={i} className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 p-7 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-slate-700">
+              <div key={i} className="group relative overflow-hidden rounded-2xl border border-slate-800/80 bg-[#0d1222]/60 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl p-7 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-slate-700">
                 <div className="mb-5 flex items-center justify-between">
                   <span className="text-4xl">{s.icon}</span>
                   <span className="text-5xl font-black text-slate-800 group-hover:text-slate-700 transition-colors">{s.num}</span>
@@ -374,12 +374,12 @@ export default function Home() {
               </p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
                 {user ? (
-                  <Link href="/report" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-3.5 text-sm font-black text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.03] transition-all">
+                  <Link href="/report" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-8 py-3.5 text-sm font-black text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.03] transition-all">
                     <span>📸</span> Report an Item →
                   </Link>
                 ) : (
                   <>
-                    <Link href="/register" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-3.5 text-sm font-black text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.03] transition-all">
+                    <Link href="/register" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-8 py-3.5 text-sm font-black text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.03] transition-all">
                       <span>🚀</span> Get Started →
                     </Link>
                     <Link href="/login" className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-800 px-8 py-3.5 text-sm font-bold text-slate-300 hover:bg-slate-700 transition-all">

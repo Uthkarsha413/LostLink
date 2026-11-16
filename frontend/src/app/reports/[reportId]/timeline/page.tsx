@@ -105,7 +105,7 @@ function TimelineContent({ params }: { params: Promise<{ reportId: string }> }) 
 
         {/* Loading */}
         {loading && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-16 text-center backdrop-blur">
+          <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-16 text-center backdrop-blur">
             <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
             <p className="mt-4 font-semibold text-slate-300">Loading item lifecycle timeline...</p>
             <p className="mt-1 text-xs text-slate-500">Fetching all 9 stages from the database</p>
@@ -123,7 +123,7 @@ function TimelineContent({ params }: { params: Promise<{ reportId: string }> }) 
         {!loading && !error && data && (
           <>
             {/* Report Header Card */}
-            <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur shadow-xl sm:p-8">
+            <div className="mb-6 rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur shadow-xl sm:p-8">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -185,7 +185,7 @@ function TimelineContent({ params }: { params: Promise<{ reportId: string }> }) 
             </div>
 
             {/* Stage Stepper */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur shadow-xl sm:p-8">
+            <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur shadow-xl sm:p-8">
               <h2 className="mb-6 text-lg font-bold text-white">🔄 Item Verification Lifecycle</h2>
 
               <div className="relative">

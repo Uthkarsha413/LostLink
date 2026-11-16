@@ -20,7 +20,7 @@ export default function AboutPage() {
             <span className="bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent">
               Lost something?{" "}
             </span>
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">
               Let&apos;s reconnect.
             </span>
           </h1>
@@ -95,7 +95,7 @@ export default function AboutPage() {
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               href="/report"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 hover:scale-[1.02] active:scale-100 transition-all"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-6 py-3 font-bold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 hover:scale-[1.02] active:scale-100 transition-all"
             >
               📋 Report an item →
             </Link>
@@ -118,7 +118,7 @@ export default function AboutPage() {
           ].map(({ emoji, label, value }) => (
             <div
               key={label}
-              className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5 text-center backdrop-blur"
+              className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-5 text-center backdrop-blur"
             >
               <div className="text-2xl mb-2">{emoji}</div>
               <div className="text-white font-bold text-sm">{value}</div>

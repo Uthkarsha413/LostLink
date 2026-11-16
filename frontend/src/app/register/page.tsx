@@ -64,7 +64,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Card */}
-        <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-7 shadow-2xl backdrop-blur-xl sm:p-9">
+        <section className="rounded-3xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-7 shadow-2xl backdrop-blur-xl sm:p-9">
           <p className="mb-2 text-xs font-bold tracking-[0.25em] text-cyan-400 uppercase">
             🎓 Join LostLink
           </p>
@@ -152,7 +152,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-3 font-bold text-white shadow-lg shadow-cyan-500/20 transition-all hover:brightness-110 hover:scale-[1.02] active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 px-4 py-3 font-bold text-white shadow-lg shadow-cyan-500/20 transition-all hover:brightness-110 hover:scale-[1.02] active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

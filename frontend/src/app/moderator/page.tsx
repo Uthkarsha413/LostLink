@@ -352,7 +352,7 @@ export default function ModeratorPage() {
                 {filteredImages.map((image) => (
                   <article
                     key={image.imageId}
-                    className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur transition-all hover:border-indigo-500/40"
+                    className="overflow-hidden rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl backdrop-blur transition-all hover:border-indigo-500/40"
                   >
                     {/* Image preview */}
                     <a href={image.imageUrl} target="_blank" rel="noopener noreferrer" className="block bg-slate-950 relative">
@@ -496,7 +496,7 @@ export default function ModeratorPage() {
                 return (
                   <article
                     key={claim.claim_id}
-                    className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur transition-all hover:border-indigo-500/30"
+                    className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur transition-all hover:border-indigo-500/30"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>

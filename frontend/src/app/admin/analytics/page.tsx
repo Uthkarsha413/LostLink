@@ -122,7 +122,7 @@ export default function AdminAnalyticsDashboard() {
           </div>
 
           {/* Date Range Filters */}
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900/80 p-4 backdrop-blur">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-4 backdrop-blur">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-semibold text-slate-400 mr-1">📅 Timeframe:</span>
               {[
@@ -232,7 +232,7 @@ export default function AdminAnalyticsDashboard() {
             {/* ROW 1: Lost vs Found + Trends */}
             <div className="grid gap-6 lg:grid-cols-12">
               {/* Lost vs Found Bar Chart */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur lg:col-span-5">
+              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur lg:col-span-5">
                 <h3 className="text-base font-bold text-white">📊 Lost vs Found Distribution</h3>
                 <p className="mt-1 text-xs text-slate-400">Comparison of reports filed this period</p>
 
@@ -272,7 +272,7 @@ export default function AdminAnalyticsDashboard() {
               </div>
 
               {/* Report Activity Trends */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur lg:col-span-7">
+              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur lg:col-span-7">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-bold text-white">📈 Report Activity Trends</h3>
@@ -329,7 +329,7 @@ export default function AdminAnalyticsDashboard() {
             {/* ROW 2: Categories + Recovery + Locations */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {/* Categories */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur">
+              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur">
                 <h3 className="text-base font-bold text-white">🏷️ Item Categories</h3>
                 <p className="mt-1 text-xs text-slate-400">Distribution by type</p>
 
@@ -364,7 +364,7 @@ export default function AdminAnalyticsDashboard() {
               </div>
 
               {/* Recovery Rate */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur flex flex-col justify-between">
+              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur flex flex-col justify-between">
                 <div>
                   <h3 className="text-base font-bold text-white">🔄 Recovery Statistics</h3>
                   <p className="mt-1 text-xs text-slate-400">Campus resolution efficacy</p>
@@ -404,7 +404,7 @@ export default function AdminAnalyticsDashboard() {
               </div>
 
               {/* Campus Hot Spots */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur">
+              <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur">
                 <h3 className="text-base font-bold text-white">📍 Campus Hot Spots</h3>
                 <p className="mt-1 text-xs text-slate-400">Locations with highest reported incidents</p>
 
@@ -438,7 +438,7 @@ export default function AdminAnalyticsDashboard() {
             </div>
 
             {/* ROW 3: Claims breakdown */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur">
+            <div className="rounded-2xl border border-purple-500/20 bg-[#0d1222]/80 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-2xl p-6 backdrop-blur">
               <h3 className="text-base font-bold text-white">⚖️ Ownership Claim Verification Overview</h3>
               <p className="mt-1 text-xs text-slate-400">Total claims filed: {data.kpis.totalClaims}</p>
 
