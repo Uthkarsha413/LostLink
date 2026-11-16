@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Logo from '../components/Logo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -56,13 +57,9 @@ export default function RegisterPage() {
 
       <div className="relative w-full max-w-lg">
         {/* Logo */}
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-center flex justify-center">
           <Link href="/" className="inline-block group">
-            <img
-              src="/lostlink-logo-white.png"
-              alt="LostLink"
-              className="h-12 w-auto mx-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_20px_rgba(6,182,212,0.4)]"
-            />
+            <Logo size="lg" />
           </Link>
         </div>
 

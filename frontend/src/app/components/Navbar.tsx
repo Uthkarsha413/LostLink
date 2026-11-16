@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Logo from "./Logo";
 
 interface UserProfile {
   userId: number | string;
@@ -110,20 +111,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6">
         {/* LOGO BRANDING */}
         <Link href="/" className="flex items-center gap-3 group relative">
-          <div className="relative flex items-center">
-            {/* Ambient Logo Hover Glow */}
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-cyan-500/30 via-blue-500/20 to-indigo-500/30 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <img
-              src="/lostlink-logo-white.png"
-              alt="LostLink"
-              className="relative h-8 sm:h-9 w-auto max-w-[160px] object-contain transition-transform duration-300 group-hover:scale-105 hidden dark:block drop-shadow-[0_0_12px_rgba(6,182,212,0.35)]"
-            />
-            <img
-              src="/lostlink-logo.png"
-              alt="LostLink"
-              className="relative h-8 sm:h-9 w-auto max-w-[160px] object-contain transition-transform duration-300 group-hover:scale-105 block dark:hidden"
-            />
-          </div>
+          <Logo size="md" />
         </Link>
 
         {/* MODERN PILL NAVIGATION TABS */}

@@ -19,12 +19,19 @@ CLIP_VECTOR_SIZE = 512
 DISTANCE_METRIC = models.Distance.COSINE
 
 
-# QDRANT CLIENT
+# QDRANT CLIENT (Auto-fallbacks to local storage if Qdrant server is offline)
 
-client = QdrantClient(
-    url=QDRANT_URL,
-    timeout=10,
-)
+try:
+    _temp_client = QdrantClient(url=QDRANT_URL, timeout=1)
+    _temp_client.get_collections()
+    client = _temp_client
+    print(f"Connected to remote Qdrant at {QDRANT_URL}")
+except Exception:
+    import os
+    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../qdrant_local_storage"))
+    os.makedirs(data_dir, exist_ok=True)
+    client = QdrantClient(path=data_dir)
+    print(f"Using embedded local Qdrant storage at {data_dir}")
 
 
 # CONNECTION CHECK

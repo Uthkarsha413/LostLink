@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
+import Logo from '../components/Logo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -54,13 +55,9 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12 text-white">
       <div className="w-full max-w-md">
         {/* BRAND LOGO */}
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-center flex justify-center">
           <Link href="/" className="inline-block group">
-            <img
-              src="/lostlink-logo-white.png"
-              alt="LostLink"
-              className="h-10 w-auto mx-auto object-contain transition-transform duration-300 group-hover:scale-105"
-            />
+            <Logo size="lg" />
           </Link>
         </div>
 

@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Logo from "./components/Logo";
 
 export default function Home() {
   const [user, setUser] = useState<{
@@ -396,11 +397,7 @@ export default function Home() {
       <footer className="border-t border-slate-800/60 py-10 px-4">
         <div className="mx-auto max-w-6xl flex flex-wrap items-center justify-between gap-6">
           <Link href="/" className="group">
-            <img
-              src="/lostlink-logo-white.png"
-              alt="LostLink"
-              className="h-8 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
-            />
+            <Logo size="sm" />
           </Link>
           <p className="text-xs text-slate-500">Intelligent discovery. Meaningful reunions.</p>
           <div className="flex flex-wrap items-center gap-5 text-xs text-slate-500">
